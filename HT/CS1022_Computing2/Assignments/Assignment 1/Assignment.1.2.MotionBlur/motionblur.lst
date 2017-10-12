@@ -1,0 +1,904 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             MotionBlur, CODE, READONLY
+    2 00000000                 IMPORT           main
+    3 00000000                 IMPORT           getPicAddr
+    4 00000000                 IMPORT           putPic
+    5 00000000                 IMPORT           getPicWidth
+    6 00000000                 IMPORT           getPicHeight
+    7 00000000                 EXPORT           start
+    8 00000000                 PRESERVE8        {TRUE}
+    9 00000000         
+   10 00000000         start
+   11 00000000         
+   12 00000000 EBFFFFFE        BL               getPicAddr  ; load the start ad
+                                                            dress of the image 
+                                                            in R4
+   13 00000004 E1A04000        MOV              R4, R0
+   14 00000008 EBFFFFFE        BL               getPicHeight ; load the height 
+                                                            of the image (rows)
+                                                             in R5
+   15 0000000C E1A05000        MOV              R5, R0
+   16 00000010 EBFFFFFE        BL               getPicWidth ; load the width of
+                                                             the image (columns
+                                                            ) in R6
+   17 00000014 E1A06000        MOV              R6, R0
+   18 00000018         
+   19 00000018 E3A03005        LDR              R3, =5      ; blurLength
+   20 0000001C E1A00004        MOV              R0, R4      ; imageStartAddress
+                                                            
+   21 00000020 EB00006F        BL               getEndAddress
+   22 00000024         
+   23 00000024 E3E01000        LDR              R1, =-1     ; for(j=0;
+   24 00000028 E2811001 
+                       forOne  ADD              R1, R1, #1  ; 
+   25 0000002C E1510005        CMP              R1, R5      ;   j<image.Height;
+                                                             j++)
+   26 00000030 AA00000D        BGE              endLoop     ; {
+   27 00000034 E3A02000        LDR              R2, =0      ;  for(i=0;
+   28 00000038 E1520006 
+                       forTwo  CMP              R2, R6      ;     i<image.Width
+                                                            ; i++)
+   29 0000003C AAFFFFF9        BGE              forOne      ;   {
+   30 00000040 E3A08000        LDR              R8, =0      ;   redTotal = 0
+   31 00000044 E3A09000        LDR              R9, =0      ;  greenTotal = 0
+   32 00000048 E3A0A000        LDR              R10, =0     ;  blueTotal = 0
+   33 0000004C EB000018        BL               addUpwards  ;     addUpwards(i,
+                                                            j)
+   34 00000050 EB000036        BL               addDownwards ;  addDownwards(i,
+                                                            j)
+   35 00000054 EB000058        BL               addCurrent  ;  addCurrent(i,j)
+   36 00000058 EB00005C        BL               getAvg      ;       getAvg()
+   37 0000005C EB000079        BL               storeAvg    ;  storeAvg()
+   38 00000060 E2844004        ADD              R4, R4, #4  ;  pixelAddress++
+   39 00000064 E2822001        ADD              R2, R2, #1  ;  i++
+   40 00000068 EAFFFFF2        B                forTwo      ; }
+   41 0000006C         endLoop                              ;}
+   42 0000006C EB000001        BL               overwriteImage
+   43 00000070 EBFFFFFE        BL               putPic      ; re-display the up
+                                                            dated image
+   44 00000074         
+   45 00000074 EAFFFFFE 
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+                       stop    B                stop
+   46 00000078         
+   47 00000078         ;overwriteImage subroutine
+   48 00000078         ;
+   49 00000078         ;Takes the image copy and overwrites the original image
+   50 00000078         ;
+   51 00000078         ;Parameters:
+   52 00000078         ;
+   53 00000078         ;
+   54 00000078         ;Returns;
+   55 00000078         ;
+   56 00000078         overwriteImage
+   57 00000078 E92D40FF        STMFD            SP!, {R0-R7, LR}
+   58 0000007C EBFFFFFE        BL               getPicAddr
+   59 00000080 E1A04000        MOV              R4, R0
+   60 00000084 EB000056        BL               getEndAddress
+   61 00000088 E0010695        MUL              R1, R5, R6  ;total = rows*colum
+                                                            ns
+   62 0000008C E3A02000        LDR              R2, =0      ;i = 0
+   63 00000090         loopH
+   64 00000090 E1520001        CMP              R2, R1      ;while(i<total)
+   65 00000094 AA000005        BGE              endLoopH    ;{
+   66 00000098 E59C3000        LDR              R3, [R12]   ; a = imageCopyPixe
+                                                            lValue
+   67 0000009C E5843000        STR              R3, [R4]    ; store(a)
+   68 000000A0 E2844004        ADD              R4, R4, #4  ; imageAddress++
+   69 000000A4 E28CC004        ADD              R12, R12, #4 ;  imageCopyAddres
+                                                            s++
+   70 000000A8 E2822001        ADD              R2, R2, #1  ;  i++
+   71 000000AC EAFFFFF7        B                loopH
+   72 000000B0         endLoopH
+   73 000000B0 E8BD80FF        LDMFD            SP!, {R0-R7, PC}
+   74 000000B4         
+   75 000000B4         ;addUpwards subroutine
+   76 000000B4         ;
+   77 000000B4         ;Adds the Red, Green and Blue components of the pixels d
+                       iagonally above the pixel at (i,j) and stores it to a ru
+                       nning total
+   78 000000B4         ;
+   79 000000B4         ;Parameters:
+   80 000000B4         ;R1= j (rows)
+   81 000000B4         ;R2= i (columns)
+   82 000000B4         ;R3= blurRadius
+   83 000000B4         ;R4= pixelAddress
+   84 000000B4         ;R5= height (rows)
+   85 000000B4         ;R6= width (columns)
+   86 000000B4         ;
+   87 000000B4         ;Returns;
+   88 000000B4         ;R0 = total
+   89 000000B4         
+   90 000000B4         addUpwards
+   91 000000B4 E92D40FE        STMFD            SP!, {R1-R7, LR}
+   92 000000B8 E1A030A3        LSR              R3, R3, #1  ; blurRadius = blur
+                                                            Length / 2
+   93 000000BC E1A07106        LSL              R7, R6, #2  ; rowLength = width
+                                                             * 4
+   94 000000C0 E0050397        MUL              R5, R7, R3  ; rowAdjustment = r
+                                                            owLength * blurRadi
+                                                            us
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+   95 000000C4 E1A06103        LSL              R6, R3, #2  ; columnAdjustment 
+                                                            = blurRadius * 4
+   96 000000C8 E0411003        SUB              R1, R1, R3  ; i-= blurRadius
+   97 000000CC E0422003        SUB              R2, R2, R3  ; j-= blurRadius
+   98 000000D0 E0444005        SUB              R4, R4, R5  ; pixelAddress -= c
+                                                            olumnAdjustment
+   99 000000D4 E0444006        SUB              R4, R4, R6  ; pixelAddress -= r
+                                                            owAdjustment
+  100 000000D8         
+  101 000000D8         wh1
+  102 000000D8 E3510000        CMP              R1, #0      ;while(i<0
+  103 000000DC BA000001        BLT              fixIndex    ;  ||
+  104 000000E0 E3520000        CMP              R2, #0      ;      j<0)
+  105 000000E4 AA000005        BGE              endWh1      ;{
+  106 000000E8         fixIndex
+  107 000000E8 E2811001        ADD              R1, R1, #1  ; i++
+  108 000000EC E2822001        ADD              R2, R2, #1  ;   j++
+  109 000000F0 E0844007        ADD              R4, R4, R7  ;  pixelAddress += 
+                                                            rowLength
+  110 000000F4 E2844004        ADD              R4, R4, #4  ;   pixelAddress ++
+                                                            
+  111 000000F8 E2433001        SUB              R3, R3, #1  ;   blurRadius--
+  112 000000FC EAFFFFF5        B                wh1         ;}
+  113 00000100         endWh1
+  114 00000100         
+  115 00000100         wh2
+  116 00000100 E3530000        CMP              R3, #0      ;while(blurRadius!=
+                                                            0)
+  117 00000104 0A000008        BEQ              endWh2      ;{
+  118 00000108 EB000060        BL               addRed      ; addRed()
+  119 0000010C EB000066        BL               addGreen    ;   addGreen()
+  120 00000110 EB00006C        BL               addBlue     ;  addBlue()
+  121 00000114 E2811001        ADD              R1, R1, #1  ;   i++
+  122 00000118 E2822001        ADD              R2, R2, #1  ;   j++
+  123 0000011C E2433001        SUB              R3, R3, #1  ;   blurRadius--
+  124 00000120 E0444007        SUB              R4, R4, R7  ;  pixelAddress += 
+                                                            rowLength
+  125 00000124 E2444004        SUB              R4, R4, #4  ;   pixelAddress ++
+                                                            
+  126 00000128 EAFFFFF4        B                wh2
+  127 0000012C         endWh2
+  128 0000012C E8BD80FE        LDMFD            SP!, {R1-R7, PC}
+  129 00000130         
+  130 00000130         ;addDownwards subroutine
+  131 00000130         ;
+  132 00000130         ;Adds the Red, Green and Blue components of the pixels d
+                       iagonally below the pixel at (i,j) and stores it to runn
+                       ing totals
+  133 00000130         ;
+  134 00000130         ;Parameters:
+  135 00000130         ;R1= j (rows)
+  136 00000130         ;R2= i (columns)
+  137 00000130         ;R3= blurRadius
+  138 00000130         ;R4= pixelAddress
+  139 00000130         ;R5= height (rows)
+  140 00000130         ;R6= width (columns)
+  141 00000130         ;
+  142 00000130         ;Returns;
+  143 00000130         ;R0 = total
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+  144 00000130         
+  145 00000130         addDownwards
+  146 00000130 E92D58FF        STMFD            SP!, {R0-R7, R11-R12, LR}
+  147 00000134 E1A0B005        MOV              R11, R5
+  148 00000138 E1A0C006        MOV              R12, R6
+  149 0000013C E1A030A3        LSR              R3, R3, #1  ; blurRadius = blur
+                                                            Length / 2
+  150 00000140 E1A07106        LSL              R7, R6, #2  ; rowLength = width
+                                                             * 4
+  151 00000144 E0050397        MUL              R5, R7, R3  ; rowAdjustment = r
+                                                            owLength * blurRadi
+                                                            us
+  152 00000148 E1A06103        LSL              R6, R3, #2  ; columnAdjustment 
+                                                            = blurRadius * 4
+  153 0000014C E0811003        ADD              R1, R1, R3  ; i+= blurRadius
+  154 00000150 E0822003        ADD              R2, R2, R3  ; j+= blurRadius
+  155 00000154 E0844005        ADD              R4, R4, R5  ; pixelAddress += c
+                                                            olumnAdjustment
+  156 00000158 E0844006        ADD              R4, R4, R6  ; pixelAddress += r
+                                                            owAdjustment
+  157 0000015C         
+  158 0000015C         wh11
+  159 0000015C E3530000        CMP              R3, #0      ;while(blurRadius!=
+                                                            0)
+  160 00000160 0A000014        BEQ              endWh22     ;{
+  161 00000164 E151000C        CMP              R1, R12     ;while(i>end
+  162 00000168 CA000001        BGT              fixIndex11  ;  ||
+  163 0000016C E152000B        CMP              R2, R11     ;      j>end)
+  164 00000170 9A000005        BLS              endWh11     ;{
+  165 00000174         fixIndex11
+  166 00000174 E2411001        SUB              R1, R1, #1  ; i++
+  167 00000178 E2422001        SUB              R2, R2, #1  ;   j++
+  168 0000017C E0444007        SUB              R4, R4, R7  ;  pixelAddress += 
+                                                            rowLength
+  169 00000180 E2444004        SUB              R4, R4, #4  ;   pixelAddress ++
+                                                            
+  170 00000184 E2433001        SUB              R3, R3, #1  ;   blurRadius--
+  171 00000188 EAFFFFF3        B                wh11        ;}
+  172 0000018C         endWh11
+  173 0000018C         
+  174 0000018C         wh22
+  175 0000018C E3530000        CMP              R3, #0      ;while(blurRadius!=
+                                                            0)
+  176 00000190 0A000008        BEQ              endWh22     ;{
+  177 00000194 EB00003D        BL               addRed      ; addRed()
+  178 00000198 EB000043        BL               addGreen    ;   addGreen()
+  179 0000019C EB000049        BL               addBlue     ;  addBlue()
+  180 000001A0 E2411001        SUB              R1, R1, #1  ;   i--
+  181 000001A4 E2422001        SUB              R2, R2, #1  ;   j--
+  182 000001A8 E2433001        SUB              R3, R3, #1  ;   blurRadius--
+  183 000001AC E0844007        ADD              R4, R4, R7  ;  pixelAddress -= 
+                                                            rowLength
+  184 000001B0 E2844004        ADD              R4, R4, #4  ;   pixelAddress --
+                                                            
+  185 000001B4 EAFFFFF4        B                wh22
+  186 000001B8         endWh22
+  187 000001B8 E8BD98FF        LDMFD            SP!, {R0-R7, R11-R12, PC}
+  188 000001BC         
+  189 000001BC         ;addCurrent subroutine
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  190 000001BC         ;
+  191 000001BC         ;Adds the current RGB components of a pixel at pixelAddr
+                       ess to the running totals
+  192 000001BC         ;
+  193 000001BC         ;Parameters:
+  194 000001BC         ;R4= pixelAddress
+  195 000001BC         ;
+  196 000001BC         ;Returns;
+  197 000001BC         ;R8= redTotal
+  198 000001BC         ;R9= greenTotal
+  199 000001BC         ;R10= blueTotal
+  200 000001BC         addCurrent
+  201 000001BC E92D40FF        STMFD            SP!, {R0-R7, LR}
+  202 000001C0 EB000032        BL               addRed
+  203 000001C4 EB000038        BL               addGreen
+  204 000001C8 EB00003E        BL               addBlue
+  205 000001CC E8BD80FF        LDMFD            SP!, {R0-R7, PC}
+  206 000001D0         
+  207 000001D0         ;gevAvg subroutine
+  208 000001D0         ;
+  209 000001D0         ;Calculates the average of each RGB combined total
+  210 000001D0         ;
+  211 000001D0         ;Parameters:
+  212 000001D0         ;R4= pixelAddress
+  213 000001D0         ;
+  214 000001D0         ;Returns;
+  215 000001D0         ;R8= redAverage
+  216 000001D0         ;R9= greenAverage
+  217 000001D0         ;R10= blueAverage
+  218 000001D0         getAvg
+  219 000001D0 E92D40FF        STMFD            SP!, {R0-R7, LR}
+  220 000001D4 EB000009        BL               avgRed
+  221 000001D8 EB00000E        BL               avgGreen
+  222 000001DC EB000013        BL               avgBlue
+  223 000001E0 E8BD80FF        LDMFD            SP!, {R0-R7, PC}
+  224 000001E4         
+  225 000001E4         ;getEndAddress subroutine
+  226 000001E4         ;
+  227 000001E4         ;
+  228 000001E4         ;Calculates the end address of the image
+  229 000001E4         ;
+  230 000001E4         ;Parameters:
+  231 000001E4         ;R4= pixelAddress
+  232 000001E4         ;
+  233 000001E4         ;Returns;
+  234 000001E4         ;R12 = endAddress
+  235 000001E4         getEndAddress
+  236 000001E4 E92D40FF        STMFD            SP!, {R0-R7, LR}
+  237 000001E8 EBFFFFFE        BL               getPicAddr
+  238 000001EC E1A04000        MOV              R4, R0
+  239 000001F0 E0000695        MUL              R0, R5, R6  ;result = rows*colu
+                                                            mns
+  240 000001F4 E1A00100        LSL              R0, R0, #2  ;result *= 4
+  241 000001F8 E080C004        ADD              R12, R0, R4 ;startAddress += re
+                                                            sult
+  242 000001FC E8BD80FF        LDMFD            SP!, {R0-R7, PC}
+  243 00000200         
+  244 00000200         
+  245 00000200         ;avgRed subroutine
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  246 00000200         ;
+  247 00000200         ;Calculates the average of the Red components total stor
+                       ed in R8
+  248 00000200         ;
+  249 00000200         ;Parameters:
+  250 00000200         ;R8= redTotal
+  251 00000200         ;
+  252 00000200         ;Returns;
+  253 00000200         ;R8= redAverage
+  254 00000200         avgRed
+  255 00000200 E92D40FF        STMFD            SP!, {R0-R7, LR}
+  256 00000204 E1A01008        MOV              R1, R8      ;R1 = redTotal
+  257 00000208 E1A02003        MOV              R2, R3      ;R2 = blurLength
+  258 0000020C EB000016        BL               divide      ;R1/R2
+  259 00000210 E1A08000        MOV              R8, R0      ;R8 = average
+  260 00000214 E8BD80FF        LDMFD            SP!, {R0-R7, PC}
+  261 00000218         
+  262 00000218         ;avgGreen subroutine
+  263 00000218         ;
+  264 00000218         ;Calculates the average of the Green components total st
+                       ored in R8
+  265 00000218         ;
+  266 00000218         ;Parameters:
+  267 00000218         ;R8= greenTotal
+  268 00000218         ;
+  269 00000218         ;Returns;
+  270 00000218         ;R8= greenAverage
+  271 00000218         avgGreen
+  272 00000218 E92D40FF        STMFD            SP!, {R0-R7, LR}
+  273 0000021C E1A01009        MOV              R1, R9      ;R1 = greenTotal
+  274 00000220 E1A02003        MOV              R2, R3      ;R2 = blurLength
+  275 00000224 EB000010        BL               divide      ;R1/R2
+  276 00000228 E1A09000        MOV              R9, R0      ;R8 = average
+  277 0000022C E8BD80FF        LDMFD            SP!, {R0-R7, PC}
+  278 00000230         
+  279 00000230         ;avgBlue subroutine
+  280 00000230         ;
+  281 00000230         ;Calculates the average of the Blue components total sto
+                       red in R8
+  282 00000230         ;
+  283 00000230         ;Parameters:
+  284 00000230         ;R8= blueTotal
+  285 00000230         ;
+  286 00000230         ;Returns;
+  287 00000230         ;R8= blueAverage
+  288 00000230         avgBlue
+  289 00000230 E92D40FF        STMFD            SP!, {R0-R7, LR}
+  290 00000234 E1A0100A        MOV              R1, R10     ;R1 = blueTotal
+  291 00000238 E1A02003        MOV              R2, R3      ;R2 = blurLength
+  292 0000023C EB00000A        BL               divide      ;R1/R2
+  293 00000240 E1A0A000        MOV              R10, R0     ;R8 = average
+  294 00000244 E8BD80FF        LDMFD            SP!, {R0-R7, PC}
+  295 00000248         
+  296 00000248         
+  297 00000248         ;storeAvg subroutine
+  298 00000248         ;
+  299 00000248         ;Stores the combined RGB Avg for a given pixel
+  300 00000248         ;
+  301 00000248         ;Parameters:
+
+
+
+ARM Macro Assembler    Page 7 
+
+
+  302 00000248         ;R8= redTotal
+  303 00000248         ;R9= greenTotal
+  304 00000248         ;R10= blueTotal
+  305 00000248         ;
+  306 00000248         ;Returns;
+  307 00000248         ;R8= blueAverage
+  308 00000248         storeAvg
+  309 00000248 E92D40FF        STMFD            SP!, {R0-R7, LR}
+  310 0000024C E3A00000        LDR              R0, =0x00000000
+  311 00000250 E1A08808        LSL              R8, R8, #16 ;shiftRed << 16
+  312 00000254 E1A09409        LSL              R9, R9, #8  ;shiftGreen << 8
+  313 00000258 E1880000        ORR              R0, R8, R0  ;setRed
+  314 0000025C E1890000        ORR              R0, R9, R0  ;setGreen
+  315 00000260 E18A0000        ORR              R0, R10, R0 ;setBlue
+  316 00000264 E48C0004        STR              R0, [R12], #4 ;storeAvg
+  317 00000268 E8BD80FF        LDMFD            SP!, {R0-R7, PC}
+  318 0000026C         
+  319 0000026C         ;divide subroutine
+  320 0000026C         ;Divides a number x by a divisor y, returning the quotie
+                       nt and the remainder
+  321 0000026C         ;
+  322 0000026C         ;Parameters: 
+  323 0000026C         ;R1 = number to be divided (x)
+  324 0000026C         ;R6 = divisor (y)
+  325 0000026C         ;
+  326 0000026C         ;Returns: 
+  327 0000026C         ;R0 = quotient
+  328 0000026C         ;R1 = remainder
+  329 0000026C         
+  330 0000026C         divide
+  331 0000026C E3520000        CMP              R2, #0
+  332 00000270 0A000005        BEQ              return      ;if divider == 0 do
+                                                            n't enter the loop
+  333 00000274         startDiv
+  334 00000274 E3A00000        LDR              R0, =0      ;quotient = 0
+  335 00000278         meanWhile
+  336 00000278 E1510002        CMP              R1, R2      ;while(remainder >=
+                                                             divider)
+  337 0000027C 9A000002        BLS              return      ;{
+  338 00000280 E2800001        ADD              R0, R0, #1  ; quotient = quotie
+                                                            nt + 1
+  339 00000284 E0411002        SUB              R1, R1, R2  ; remainder = reama
+                                                            inder - y
+  340 00000288 EAFFFFFA        B                meanWhile   ;}
+  341 0000028C         return
+  342 0000028C E12FFF1E        BX               LR
+  343 00000290         
+  344 00000290         ;addRed subroutine
+  345 00000290         ;
+  346 00000290         ;Adds the Red component of a pixel at pixelAddress to th
+                       e running total
+  347 00000290         ;
+  348 00000290         ;Parameters:
+  349 00000290         ;R4= pixelAddress
+  350 00000290         ;
+  351 00000290         ;Returns;
+  352 00000290         ;R8= redTotal
+  353 00000290         addRed
+  354 00000290 E92D40FF        STMFD            SP!, {R0-R7, LR}
+
+
+
+ARM Macro Assembler    Page 8 
+
+
+  355 00000294 E3A018FF        LDR              R1, =0x00FF0000 ;R1 = redMask
+  356 00000298 E5943000        LDR              R3, [R4]    ;pixel = loadPixelV
+                                                            alue(pixelAddress)
+  357 0000029C E0032001        AND              R2, R3, R1  ;redComp = getRedCo
+                                                            mponent(pixel)
+  358 000002A0 E1A02822        LSR              R2, R2, #16 ;shiftRight(redComp
+                                                            , 24)
+  359 000002A4 E0888002        ADD              R8, R8, R2  ;redTotal += redCom
+                                                            p
+  360 000002A8 E8BD80FF        LDMFD            SP!, {R0-R7, PC}
+  361 000002AC         
+  362 000002AC         ;addGreen subroutine
+  363 000002AC         ;
+  364 000002AC         ;Adds the Green component of a pixel at pixelAddress to 
+                       the running total
+  365 000002AC         ;
+  366 000002AC         ;Parameters:
+  367 000002AC         ;R4= pixelAddress
+  368 000002AC         ;
+  369 000002AC         ;Returns;
+  370 000002AC         ;R9= greenTotal
+  371 000002AC         addGreen
+  372 000002AC E92D40FF        STMFD            SP!, {R0-R7, LR}
+  373 000002B0 E3A01CFF        LDR              R1, =0x0000FF00 ;R1 = greenMask
+                                                            
+  374 000002B4 E5940000        LDR              R0, [R4]    ;pixel = loadPixelV
+                                                            alue(pixelAddress)
+  375 000002B8 E0002001        AND              R2, R0, R1  ;greenComp = getGre
+                                                            enComponent(pixel)
+  376 000002BC E1A02422        LSR              R2, R2, #8  ;shiftRight(greenCo
+                                                            mp, 24)
+  377 000002C0 E0899002        ADD              R9, R9, R2  ;redTotal += redCom
+                                                            p
+  378 000002C4 E8BD80FF        LDMFD            SP!, {R0-R7, PC}
+  379 000002C8         
+  380 000002C8         ;addBlue subroutine
+  381 000002C8         ;
+  382 000002C8         ;Adds the Blue component of a pixel at pixelAddress to t
+                       he running total
+  383 000002C8         ;
+  384 000002C8         ;Parameters:
+  385 000002C8         ;R4= pixelAddress
+  386 000002C8         ;
+  387 000002C8         ;Returns;
+  388 000002C8         ;R10= blueTotal
+  389 000002C8         addBlue
+  390 000002C8 E92D40FF        STMFD            SP!, {R0-R7, LR}
+  391 000002CC E3A010FF        LDR              R1, =0x000000FF ;R1 = blueMask
+  392 000002D0 E5940000        LDR              R0, [R4]    ;pixel = loadPixelV
+                                                            alue(pixelAddress)
+  393 000002D4 E0002001        AND              R2, R0, R1  ;blueComp = getGree
+                                                            nComponent(pixel)
+  394 000002D8 E08AA002        ADD              R10, R10, R2 ;redTotal += redCo
+                                                            mp
+  395 000002DC E8BD80FF        LDMFD            SP!, {R0-R7, PC}
+  396 000002E0         
+  397 000002E0         
+  398 000002E0                 END
+Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\m
+
+
+
+ARM Macro Assembler    Page 9 
+
+
+otionblur.d -o.\motionblur.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\I
+nclude -IC:\Keil_v5\ARM\Inc\Philips --predefine="__EVAL SETA 1" --predefine="__
+MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 521" --predefine="NO_CLOCK
+_SETUP SETA 1" --predefine="NO_EMC_SETUP SETA 1" --predefine="RAM_INTVEC SETA 1
+" --predefine="RAM_MODE SETA 1" --predefine="REMAP SETA 1" --list=.\motionblur.
+lst MotionBlur.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+MotionBlur 00000000
+
+Symbol: MotionBlur
+   Definitions
+      At line 1 in file MotionBlur.s
+   Uses
+      None
+Comment: MotionBlur unused
+addBlue 000002C8
+
+Symbol: addBlue
+   Definitions
+      At line 389 in file MotionBlur.s
+   Uses
+      At line 120 in file MotionBlur.s
+      At line 179 in file MotionBlur.s
+      At line 204 in file MotionBlur.s
+
+addCurrent 000001BC
+
+Symbol: addCurrent
+   Definitions
+      At line 200 in file MotionBlur.s
+   Uses
+      At line 35 in file MotionBlur.s
+Comment: addCurrent used once
+addDownwards 00000130
+
+Symbol: addDownwards
+   Definitions
+      At line 145 in file MotionBlur.s
+   Uses
+      At line 34 in file MotionBlur.s
+Comment: addDownwards used once
+addGreen 000002AC
+
+Symbol: addGreen
+   Definitions
+      At line 371 in file MotionBlur.s
+   Uses
+      At line 119 in file MotionBlur.s
+      At line 178 in file MotionBlur.s
+      At line 203 in file MotionBlur.s
+
+addRed 00000290
+
+Symbol: addRed
+   Definitions
+      At line 353 in file MotionBlur.s
+   Uses
+      At line 118 in file MotionBlur.s
+      At line 177 in file MotionBlur.s
+      At line 202 in file MotionBlur.s
+
+addUpwards 000000B4
+
+Symbol: addUpwards
+   Definitions
+      At line 90 in file MotionBlur.s
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+   Uses
+      At line 33 in file MotionBlur.s
+Comment: addUpwards used once
+avgBlue 00000230
+
+Symbol: avgBlue
+   Definitions
+      At line 288 in file MotionBlur.s
+   Uses
+      At line 222 in file MotionBlur.s
+Comment: avgBlue used once
+avgGreen 00000218
+
+Symbol: avgGreen
+   Definitions
+      At line 271 in file MotionBlur.s
+   Uses
+      At line 221 in file MotionBlur.s
+Comment: avgGreen used once
+avgRed 00000200
+
+Symbol: avgRed
+   Definitions
+      At line 254 in file MotionBlur.s
+   Uses
+      At line 220 in file MotionBlur.s
+Comment: avgRed used once
+divide 0000026C
+
+Symbol: divide
+   Definitions
+      At line 330 in file MotionBlur.s
+   Uses
+      At line 258 in file MotionBlur.s
+      At line 275 in file MotionBlur.s
+      At line 292 in file MotionBlur.s
+
+endLoop 0000006C
+
+Symbol: endLoop
+   Definitions
+      At line 41 in file MotionBlur.s
+   Uses
+      At line 26 in file MotionBlur.s
+Comment: endLoop used once
+endLoopH 000000B0
+
+Symbol: endLoopH
+   Definitions
+      At line 72 in file MotionBlur.s
+   Uses
+      At line 65 in file MotionBlur.s
+Comment: endLoopH used once
+endWh1 00000100
+
+Symbol: endWh1
+   Definitions
+      At line 113 in file MotionBlur.s
+   Uses
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 105 in file MotionBlur.s
+Comment: endWh1 used once
+endWh11 0000018C
+
+Symbol: endWh11
+   Definitions
+      At line 172 in file MotionBlur.s
+   Uses
+      At line 164 in file MotionBlur.s
+Comment: endWh11 used once
+endWh2 0000012C
+
+Symbol: endWh2
+   Definitions
+      At line 127 in file MotionBlur.s
+   Uses
+      At line 117 in file MotionBlur.s
+Comment: endWh2 used once
+endWh22 000001B8
+
+Symbol: endWh22
+   Definitions
+      At line 186 in file MotionBlur.s
+   Uses
+      At line 160 in file MotionBlur.s
+      At line 176 in file MotionBlur.s
+
+fixIndex 000000E8
+
+Symbol: fixIndex
+   Definitions
+      At line 106 in file MotionBlur.s
+   Uses
+      At line 103 in file MotionBlur.s
+Comment: fixIndex used once
+fixIndex11 00000174
+
+Symbol: fixIndex11
+   Definitions
+      At line 165 in file MotionBlur.s
+   Uses
+      At line 162 in file MotionBlur.s
+Comment: fixIndex11 used once
+forOne 00000028
+
+Symbol: forOne
+   Definitions
+      At line 24 in file MotionBlur.s
+   Uses
+      At line 29 in file MotionBlur.s
+Comment: forOne used once
+forTwo 00000038
+
+Symbol: forTwo
+   Definitions
+      At line 28 in file MotionBlur.s
+   Uses
+      At line 40 in file MotionBlur.s
+Comment: forTwo used once
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Relocatable symbols
+
+getAvg 000001D0
+
+Symbol: getAvg
+   Definitions
+      At line 218 in file MotionBlur.s
+   Uses
+      At line 36 in file MotionBlur.s
+Comment: getAvg used once
+getEndAddress 000001E4
+
+Symbol: getEndAddress
+   Definitions
+      At line 235 in file MotionBlur.s
+   Uses
+      At line 21 in file MotionBlur.s
+      At line 60 in file MotionBlur.s
+
+loopH 00000090
+
+Symbol: loopH
+   Definitions
+      At line 63 in file MotionBlur.s
+   Uses
+      At line 71 in file MotionBlur.s
+Comment: loopH used once
+meanWhile 00000278
+
+Symbol: meanWhile
+   Definitions
+      At line 335 in file MotionBlur.s
+   Uses
+      At line 340 in file MotionBlur.s
+Comment: meanWhile used once
+overwriteImage 00000078
+
+Symbol: overwriteImage
+   Definitions
+      At line 56 in file MotionBlur.s
+   Uses
+      At line 42 in file MotionBlur.s
+Comment: overwriteImage used once
+return 0000028C
+
+Symbol: return
+   Definitions
+      At line 341 in file MotionBlur.s
+   Uses
+      At line 332 in file MotionBlur.s
+      At line 337 in file MotionBlur.s
+
+start 00000000
+
+Symbol: start
+   Definitions
+      At line 10 in file MotionBlur.s
+   Uses
+      At line 7 in file MotionBlur.s
+Comment: start used once
+startDiv 00000274
+
+
+
+ARM Macro Assembler    Page 5 Alphabetic symbol ordering
+Relocatable symbols
+
+
+Symbol: startDiv
+   Definitions
+      At line 333 in file MotionBlur.s
+   Uses
+      None
+Comment: startDiv unused
+stop 00000074
+
+Symbol: stop
+   Definitions
+      At line 45 in file MotionBlur.s
+   Uses
+      At line 45 in file MotionBlur.s
+Comment: stop used once
+storeAvg 00000248
+
+Symbol: storeAvg
+   Definitions
+      At line 308 in file MotionBlur.s
+   Uses
+      At line 37 in file MotionBlur.s
+Comment: storeAvg used once
+wh1 000000D8
+
+Symbol: wh1
+   Definitions
+      At line 101 in file MotionBlur.s
+   Uses
+      At line 112 in file MotionBlur.s
+Comment: wh1 used once
+wh11 0000015C
+
+Symbol: wh11
+   Definitions
+      At line 158 in file MotionBlur.s
+   Uses
+      At line 171 in file MotionBlur.s
+Comment: wh11 used once
+wh2 00000100
+
+Symbol: wh2
+   Definitions
+      At line 115 in file MotionBlur.s
+   Uses
+      At line 126 in file MotionBlur.s
+Comment: wh2 used once
+wh22 0000018C
+
+Symbol: wh22
+   Definitions
+      At line 174 in file MotionBlur.s
+   Uses
+      At line 185 in file MotionBlur.s
+Comment: wh22 used once
+35 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+getPicAddr 00000000
+
+Symbol: getPicAddr
+   Definitions
+      At line 3 in file MotionBlur.s
+   Uses
+      At line 12 in file MotionBlur.s
+      At line 58 in file MotionBlur.s
+      At line 237 in file MotionBlur.s
+
+getPicHeight 00000000
+
+Symbol: getPicHeight
+   Definitions
+      At line 6 in file MotionBlur.s
+   Uses
+      At line 14 in file MotionBlur.s
+Comment: getPicHeight used once
+getPicWidth 00000000
+
+Symbol: getPicWidth
+   Definitions
+      At line 5 in file MotionBlur.s
+   Uses
+      At line 16 in file MotionBlur.s
+Comment: getPicWidth used once
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 2 in file MotionBlur.s
+   Uses
+      None
+Comment: main unused
+putPic 00000000
+
+Symbol: putPic
+   Definitions
+      At line 4 in file MotionBlur.s
+   Uses
+      At line 43 in file MotionBlur.s
+Comment: putPic used once
+5 symbols
+378 symbols in table

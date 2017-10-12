@@ -1,0 +1,54 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.21.1.0
+Copyright (C) 2016 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Bra bd199, Dna, LIC=----
+ 
+Tool Versions:
+Toolchain:       MDK-Lite  Version: 5.21a
+Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 3 (build 300)
+Assembler:       Armasm.exe V5.06 update 3 (build 300)
+Linker/Locator:  ArmLink.exe V5.06 update 3 (build 300)
+Library Manager: ArmAr.exe V5.06 update 3 (build 300)
+Hex Converter:   FromElf.exe V5.06 update 3 (build 300)
+CPU DLL:         SARMCM3.DLL V5.21a
+Dialog DLL:      DARMCM1.DLL V1.14.0.0
+Target DLL:      UL2CM3.DLL V1.158.5.0
+Dialog DLL:      TARMCM1.DLL V1.10.0.0
+ 
+<h2>Project:</h2>
+C:\Users\bd199\Google Drive\Trinity\CS 2016-17\CS1021 Computing\Labs\Lab-0-2-FirstProgram\FirstProgram.uvproj
+Project File Date:  11/03/2016
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 3 (build 300)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+Rebuild target 'Simulator'
+assembling FirstProgram.s...
+linking...
+.\FirstProgram.axf: Error: L6366E: main.o attributes are not compatible with the provided attributes .
+Object main.o contains Build Attributes that are incompatible with the provided attributes.
+    Tag_CPU_arch = ARM v4T (=2)
+    Tag_THUMB_ISA_use = No Thumb instructions were permitted to be used (=0)
+    Tag_ARM_ISA_use = ARM instructions were permitted to be used (=1)
+.\FirstProgram.axf: Error: L6242E: Cannot link object main.o as its attributes are incompatible with the image attributes.
+   ... arm-isa clashes with m-profile.
+.\FirstProgram.axf: Error: L6366E: serial.o attributes are not compatible with the provided attributes .
+Object serial.o contains Build Attributes that are incompatible with the provided attributes.
+    Tag_CPU_arch = ARM v4T (=2)
+    Tag_THUMB_ISA_use = No Thumb instructions were permitted to be used (=0)
+    Tag_ARM_ISA_use = ARM instructions were permitted to be used (=1)
+.\FirstProgram.axf: Error: L6242E: Cannot link object serial.o as its attributes are incompatible with the image attributes.
+   ... arm-isa clashes with m-profile.
+Not enough information to list image symbols.
+Not enough information to list the image map.
+Finished: 12 information, 0 warning and 4 error messages.
+".\FirstProgram.axf" - 4 Error(s), 0 Warning(s).
+Target not created.
+Build Time Elapsed:  00:00:00
+</pre>
+</body>
+</html>

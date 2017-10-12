@@ -1,0 +1,82 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\Dooleyb1\Desktop\Assignments\MicroVision Templates\Assignment-1-2-StatEval\StatEval.uvproj
+Project File Date:  11/02/2016
+
+<h2>Output:</h2>
+Rebuild target 'Simulator'
+assembling StatEval.s...
+StatEval.s(10): error: A1163E: Unknown opcode R10, , expecting opcode or Macro
+".\StatEval.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling StatEval.s...
+StatEval.s(10): error: A1163E: Unknown opcode R10, , expecting opcode or Macro
+".\StatEval.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling StatEval.s...
+linking...
+Program Size: Code=804 RO-data=32 RW-data=4 ZI-data=4364  
+".\StatEval.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling StatEval.s...
+StatEval.s(27): error: A1152E: Unexpected operator
+StatEval.s(28): error: A1152E: Unexpected operator
+StatEval.s(34): error: A1477E: This register combination results in UNPREDICTABLE behaviour
+".\StatEval.axf" - 3 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling StatEval.s...
+StatEval.s(27): error: A1152E: Unexpected operator
+StatEval.s(28): error: A1152E: Unexpected operator
+".\StatEval.axf" - 2 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling StatEval.s...
+linking...
+Program Size: Code=820 RO-data=32 RW-data=4 ZI-data=4364  
+".\StatEval.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling StatEval.s...
+linking...
+Program Size: Code=820 RO-data=32 RW-data=4 ZI-data=4364  
+".\StatEval.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling StatEval.s...
+linking...
+Program Size: Code=808 RO-data=32 RW-data=4 ZI-data=4364  
+".\StatEval.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling StatEval.s...
+linking...
+Program Size: Code=808 RO-data=32 RW-data=4 ZI-data=4364  
+".\StatEval.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling StatEval.s...
+linking...
+Program Size: Code=808 RO-data=32 RW-data=4 ZI-data=4364  
+".\StatEval.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling StatEval.s...
+linking...
+Program Size: Code=812 RO-data=32 RW-data=4 ZI-data=4364  
+".\StatEval.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling StatEval.s...
+linking...
+Program Size: Code=804 RO-data=32 RW-data=4 ZI-data=4364  
+".\StatEval.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling StatEval.s...
+linking...
+Program Size: Code=808 RO-data=32 RW-data=4 ZI-data=4364  
+".\StatEval.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling StatEval.s...
+linking...
+Program Size: Code=808 RO-data=32 RW-data=4 ZI-data=4364  
+".\StatEval.axf" - 0 Errors, 0 Warning(s).

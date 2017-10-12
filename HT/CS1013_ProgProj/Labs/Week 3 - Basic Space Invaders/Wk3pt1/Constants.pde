@@ -1,0 +1,4 @@
+int SCREEN_X=600;
+int SCREEN_Y=500;
+int ALIEN_WIDTH = 30;
+int ALIEN_HEIGHT = 25;

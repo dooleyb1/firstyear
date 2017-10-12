@@ -1,0 +1,1 @@
+.\matmul.o: MatMul.s

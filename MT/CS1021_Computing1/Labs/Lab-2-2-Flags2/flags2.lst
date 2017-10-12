@@ -1,0 +1,73 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             Flags2, CODE, READONLY
+    2 00000000                 IMPORT           main
+    3 00000000                 EXPORT           start
+    4 00000000         
+    5 00000000         start
+    6 00000000         
+    7 00000000 E3A01005        LDR              R1, =2_0101
+    8 00000004 E3A02001        LDR              R2, =2_0001
+    9 00000008 E0910002        ADDS             R0, R1, R2
+   10 0000000C         
+   11 0000000C EAFFFFFE 
+                       stop    B                stop
+   12 00000010         
+   13 00000010                 END
+Command Line: --debug --xref --apcs=interwork --depend=.\flags2.d -o.\flags2.o 
+-IC:\Keil\ARM\RV31\INC -IC:\Keil\ARM\CMSIS\Include -IC:\Keil\ARM\Inc\Philips --
+predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --predefine="NO_CLOCK
+_SETUP SETA 1" --predefine="NO_EMC_SETUP SETA 1" --predefine="RAM_INTVEC SETA 1
+" --predefine="RAM_MODE SETA 1" --predefine="REMAP SETA 1" --list=.\flags2.lst 
+Flags2.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+Flags2 00000000
+
+Symbol: Flags2
+   Definitions
+      At line 1 in file Flags2.s
+   Uses
+      None
+Comment: Flags2 unused
+start 00000000
+
+Symbol: start
+   Definitions
+      At line 5 in file Flags2.s
+   Uses
+      At line 3 in file Flags2.s
+Comment: start used once
+stop 0000000C
+
+Symbol: stop
+   Definitions
+      At line 11 in file Flags2.s
+   Uses
+      At line 11 in file Flags2.s
+Comment: stop used once
+3 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 2 in file Flags2.s
+   Uses
+      None
+Comment: main unused
+1 symbol
+341 symbols in table

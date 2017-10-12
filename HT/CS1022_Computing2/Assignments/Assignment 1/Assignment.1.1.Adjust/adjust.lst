@@ -1,0 +1,610 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             Adjust, CODE, READONLY
+    2 00000000                 IMPORT           main
+    3 00000000                 IMPORT           getPicAddr
+    4 00000000                 IMPORT           putPic
+    5 00000000                 IMPORT           getPicWidth
+    6 00000000                 IMPORT           getPicHeight
+    7 00000000                 EXPORT           start
+    8 00000000                 PRESERVE8        {TRUE}
+    9 00000000         
+   10 00000000         start
+   11 00000000         
+   12 00000000 EBFFFFFE        BL               getPicAddr  ; load the start ad
+                                                            dress of the image 
+                                                            in R4
+   13 00000004 E1A04000        MOV              R4, R0
+   14 00000008 EBFFFFFE        BL               getPicHeight 
+                                                            ; R5 = image.Height
+                                                            
+   15 0000000C E1A05000        MOV              R5, R0
+   16 00000010 EBFFFFFE        BL               getPicWidth ; R6 = image.Width
+   17 00000014 E1A06000        MOV              R6, R0
+   18 00000018         
+   19 00000018 E3A0700A        LDR              R7, =10     ; brightnessVal = b
+                                                            
+   20 0000001C E3A08006        LDR              R8, =6      ; contrastVal = c
+   21 00000020 EB000015        BL               getEndAddress
+   22 00000024         
+   23 00000024 E3E01000        LDR              R1, =-1     ; for(j=0;
+   24 00000028 E2811001 
+                       forOne  ADD              R1, R1, #1  ; 
+   25 0000002C E1510005        CMP              R1, R5      ;   j<image.Height;
+                                                             j++)
+   26 00000030 AA00000E        BGE              endLoop     ; {
+   27 00000034 E3A02000        LDR              R2, =0      ;  for(i=0;
+   28 00000038 E1520006 
+                       forTwo  CMP              R2, R6      ;     i<image.Width
+                                                            ; i++)
+   29 0000003C AAFFFFF9        BGE              forOne      ;   {
+   30 00000040 E3510000        CMP              R1, #0
+   31 00000044 1A000005        BNE              checkNext
+   32 00000048 E3520000        CMP              R2, #0
+   33 0000004C 1A000003        BNE              checkNext
+   34 00000050 EB000028        BL               adjustPixel ;     adjustPixel(i
+                                                            ,j)
+   35 00000054 E2844004        ADD              R4, R4, #4  ;  pixelAddress++
+   36 00000058 E2822001        ADD              R2, R2, #1  ;  i++
+   37 0000005C EAFFFFF5        B                forTwo
+   38 00000060         checkNext
+   39 00000060 EB00000C        BL               checkNextPixel
+   40 00000064 E2844004        ADD              R4, R4, #4  ;  pixelAddress++
+   41 00000068 E2822001        ADD              R2, R2, #1  ;  i++
+   42 0000006C EAFFFFF1        B                forTwo      ; }
+   43 00000070         endLoop                              ;}
+   44 00000070         
+   45 00000070 EB000011        BL               overwriteImage
+   46 00000074 EBFFFFFE        BL               putPic      ; re-display the up
+                                                            dated image
+   47 00000078         
+   48 00000078 EAFFFFFE 
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+                       stop    B                stop
+   49 0000007C         
+   50 0000007C         ;getEndAddress subroutine
+   51 0000007C         ;
+   52 0000007C         ;
+   53 0000007C         ;Calculates the end address of the image
+   54 0000007C         ;
+   55 0000007C         ;Parameters:
+   56 0000007C         ;R4= pixelAddress
+   57 0000007C         ;
+   58 0000007C         ;Returns;
+   59 0000007C         ;R12 = endAddress
+   60 0000007C         getEndAddress
+   61 0000007C E92D40FF        STMFD            SP!, {R0-R7, LR}
+   62 00000080 EBFFFFFE        BL               getPicAddr
+   63 00000084 E1A04000        MOV              R4, R0
+   64 00000088 E0000695        MUL              R0, R5, R6  ;result = rows*colu
+                                                            mns
+   65 0000008C E1A00100        LSL              R0, R0, #2  ;result *= 4
+   66 00000090 E080C004        ADD              R12, R0, R4 ;startAddress += re
+                                                            sult
+   67 00000094 E8BD80FF        LDMFD            SP!, {R0-R7, PC}
+   68 00000098         
+   69 00000098         
+   70 00000098         ;checkNextPixel Subroutine
+   71 00000098         ;
+   72 00000098         ;Compares currentPixel to nextPixel, if they are the sam
+                       e then the adjustment value of nextPixel is set to adjus
+                       tmentValue of currentPixel 
+   73 00000098         ;
+   74 00000098         ;Parameters:
+   75 00000098         ;R4= pixelAddress
+   76 00000098         ;R7= brightnessVal (b)
+   77 00000098         ;R8= contrastVal (c)
+   78 00000098         ;
+   79 00000098         ;Returns;
+   80 00000098         ;
+   81 00000098         
+   82 00000098         checkNextPixel
+   83 00000098 E92D419F        STMFD            SP!, {R0-R4, R7-R8, LR}
+   84 0000009C E5940000        LDR              R0, [R4]    ;load(currentPixel)
+                                                            
+   85 000000A0 E5941004        LDR              R1, [R4, #4] ;load(nextPixel)
+   86 000000A4 E1500001        CMP              R0, R1      ;if(currentPixel ==
+                                                             nextPixel)
+   87 000000A8 1A000001        BNE              notSame     ;{
+   88 000000AC E48CA004        STR              R10, [R12] ,#4 ; nextPixelAdjus
+                                                            tmentVal =
+   89 000000B0 EA000000        B                endSub
+   90 000000B4         notSame                              ;else
+   91 000000B4 EB00000F        BL               adjustPixel ;adjustPixel()
+   92 000000B8         endSub
+   93 000000B8 E8BD819F        LDMFD            SP!, {R0-R4, R7-R8, PC}
+   94 000000BC         
+   95 000000BC         
+   96 000000BC         ;overwriteImage subroutine
+   97 000000BC         ;
+   98 000000BC         ;Takes the image copy and overwrites the original image
+   99 000000BC         ;
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+  100 000000BC         ;Parameters:
+  101 000000BC         ;
+  102 000000BC         ;
+  103 000000BC         ;Returns;
+  104 000000BC         ;
+  105 000000BC         overwriteImage
+  106 000000BC E92D40FF        STMFD            SP!, {R0-R7, LR}
+  107 000000C0 EBFFFFFE        BL               getPicAddr
+  108 000000C4 E1A04000        MOV              R4, R0
+  109 000000C8 EBFFFFEB        BL               getEndAddress
+  110 000000CC E0010695        MUL              R1, R5, R6  ;total = rows*colum
+                                                            ns
+  111 000000D0 E3A02000        LDR              R2, =0      ;i = 0
+  112 000000D4         loopH
+  113 000000D4 E1520001        CMP              R2, R1      ;while(i<total)
+  114 000000D8 AA000005        BGE              endLoopH    ;{
+  115 000000DC E59C3000        LDR              R3, [R12]   ; a = imageCopyPixe
+                                                            lValue
+  116 000000E0 E5843000        STR              R3, [R4]    ; store(a)
+  117 000000E4 E2844004        ADD              R4, R4, #4  ; imageAddress++
+  118 000000E8 E28CC004        ADD              R12, R12, #4 ;  imageCopyAddres
+                                                            s++
+  119 000000EC E2822001        ADD              R2, R2, #1  ;  i++
+  120 000000F0 EAFFFFF7        B                loopH
+  121 000000F4         endLoopH
+  122 000000F4 E8BD80FF        LDMFD            SP!, {R0-R7, PC}
+  123 000000F8         
+  124 000000F8         ;adjustPixel subroutine
+  125 000000F8         ;
+  126 000000F8         ;Adjusts the brightness and contrast of pixel at image[i
+                       ][j] based on the value of the 
+  127 000000F8         ;adjustment parameters b and c
+  128 000000F8         ;
+  129 000000F8         ;Parameters:
+  130 000000F8         ;R4= pixelAddress
+  131 000000F8         ;R7= brightnessVal (b)
+  132 000000F8         ;R8= contrastVal (c)
+  133 000000F8         ;
+  134 000000F8         ;Returns;
+  135 000000F8         ;
+  136 000000F8         
+  137 000000F8         adjustPixel
+  138 000000F8 E92D419F        STMFD            SP!, {R0-R4, R7-R8, LR}
+  139 000000FC EB000003        BL               adjustRed   ;adjustRed(pixel)
+  140 00000100 EB000014        BL               adjustGreen ;adjustGreen(pixel)
+                                                            
+  141 00000104 EB000025        BL               adjustBlue  ;adjustBlue(pixel)
+  142 00000108 E48CA004        STR              R10, [R12], #4 ;storeVal()
+  143 0000010C E8BD819F        LDMFD            SP!, {R0-R4, R7-R8, PC}
+  144 00000110         
+  145 00000110         ;adjustRed subroutine
+  146 00000110         ;
+  147 00000110         ;Adjusts the red component of a pixel based on the adjus
+                       tment values b and c
+  148 00000110         ;
+  149 00000110         ;Parameters:
+  150 00000110         ;R0 = pixelVal
+  151 00000110         ;R7= brightnessVal (b)
+  152 00000110         ;R8= contrastVal (c)
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+  153 00000110         ;
+  154 00000110         ;Returns;
+  155 00000110         ;
+  156 00000110         
+  157 00000110         adjustRed
+  158 00000110 E92D4007        STMFD            SP!, {R0-R2, LR}
+  159 00000114 E3A018FF        LDR              R1, =0x00FF0000 ;R1 = redMask
+  160 00000118 E5940000        LDR              R0, [R4]    ;pixel = loadPixelV
+                                                            alue(pixelAddress)
+  161 0000011C E0002001        AND              R2, R0, R1  ;redComp = getRedCo
+                                                            mponent(pixel)
+  162 00000120 E1A02822        LSR              R2, R2, #16 ;shiftRight(redComp
+                                                            , 24)
+  163 00000124 E0020298        MUL              R2, R8, R2  ;redComp *= contras
+                                                            tVal
+  164 00000128 E1A02222        LSR              R2, R2, #4  ;redComp/16
+  165 0000012C E0822008        ADD              R2, R2, R8  ;redComp+=B
+  166 00000130         
+  167 00000130 E35200FF        CMP              R2, #255    ;if(recComp > 255)
+  168 00000134 9A000000        BLS              checkZero   ;{
+  169 00000138 E3A020FF        LDR              R2, =255    ; redComp = 255
+  170 0000013C         ;}
+  171 0000013C         checkZero
+  172 0000013C E3520000        CMP              R2, #0      ;if(redComp < 0)
+  173 00000140 2A000000        BHS              endSubRout  ;{
+  174 00000144 E3A02000        LDR              R2, =0      ; redComp = 0
+  175 00000148         endSubRout                           ;}
+  176 00000148 E1A02802        LSL              R2, R2, #16 ;shiftLeft(redComp,
+                                                             24)
+  177 0000014C E1820000        ORR              R0, R2, R0  ;redComp = setRedCo
+                                                            mponent(pixel)
+  178 00000150 E5840000        STR              R0, [R4]    ;
+  179 00000154 E8BD8007        LDMFD            SP!, {R0-R2, PC}
+  180 00000158         
+  181 00000158         ;adjustGreen subroutine
+  182 00000158         ;
+  183 00000158         ;Adjusts the green component of a pixel based on the adj
+                       ustment values b and c
+  184 00000158         ;
+  185 00000158         ;Parameters:
+  186 00000158         ;R0 = pixelVal
+  187 00000158         ;R7= brightnessVal (b)
+  188 00000158         ;R8= contrastVal (c)
+  189 00000158         ;
+  190 00000158         ;Returns;
+  191 00000158         ;
+  192 00000158         
+  193 00000158         adjustGreen
+  194 00000158 E92D4007        STMFD            SP!, {R0-R2, LR}
+  195 0000015C E3A01CFF        LDR              R1, =0x0000FF00 ;R1 = greenMask
+                                                            
+  196 00000160 E5940000        LDR              R0, [R4]    ;pixel = loadPixelV
+                                                            alue(pixelAddress)
+  197 00000164 E0002001        AND              R2, R0, R1  ;greenComp = getGre
+                                                            enComponent(pixel)
+  198 00000168 E1A02422        LSR              R2, R2, #8  ;shiftRight(greenCo
+                                                            mp, 24)
+  199 0000016C E0020298        MUL              R2, R8, R2  ;greenComp *= contr
+                                                            astVal
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  200 00000170 E1A02222        LSR              R2, R2, #4  ;greenComp/16
+  201 00000174 E0822008        ADD              R2, R2, R8  ;greenComp+=B
+  202 00000178         
+  203 00000178 E35200FF        CMP              R2, #255    ;if(greenComp > 255
+                                                            )
+  204 0000017C 9A000000        BLS              checkZero2  ;{
+  205 00000180 E3A020FF        LDR              R2, =255    ; greenComp = 255
+  206 00000184         ;}
+  207 00000184         checkZero2
+  208 00000184 E3520000        CMP              R2, #0      ;if(greenComp < 0)
+  209 00000188 2A000000        BHS              endSubRout2 ;{
+  210 0000018C E3A02000        LDR              R2, =0      ; greenComp = 0
+  211 00000190         endSubRout2                          ;}
+  212 00000190 E1A02402        LSL              R2, R2, #8  ;shiftLeft(greenCom
+                                                            p, 24)
+  213 00000194 E1820000        ORR              R0, R2, R0  ;greenComp = setGre
+                                                            enComponent(pixel)
+  214 00000198 E5840000        STR              R0, [R4]    ;
+  215 0000019C E8BD8007        LDMFD            SP!, {R0-R2, PC}
+  216 000001A0         
+  217 000001A0         ;adjustBlue subroutine
+  218 000001A0         ;
+  219 000001A0         ;Adjusts the blue component of a pixel based on the adju
+                       stment values b and c
+  220 000001A0         ;
+  221 000001A0         ;Parameters:
+  222 000001A0         ;R0 = pixelVal
+  223 000001A0         ;R7= brightnessVal (b)
+  224 000001A0         ;R8= contrastVal (c)
+  225 000001A0         ;
+  226 000001A0         ;Returns;
+  227 000001A0         ;
+  228 000001A0         
+  229 000001A0         adjustBlue
+  230 000001A0 E92D4007        STMFD            SP!, {R0-R2, LR}
+  231 000001A4 E3A010FF        LDR              R1, =0x000000FF ;R1 = blueMask
+  232 000001A8 E5940000        LDR              R0, [R4]    ;pixel = loadPixelV
+                                                            alue(pixelAddress)
+  233 000001AC E0022001        AND              R2, R2, R1  ;blueComp = getGree
+                                                            nComponent(pixel)
+  234 000001B0 E0020298        MUL              R2, R8, R2  ;blueComp *= contra
+                                                            stVal
+  235 000001B4 E1A02222        LSR              R2, R2, #4  ;blueComp/16
+  236 000001B8 E0822008        ADD              R2, R2, R8  ;blueComp+=B
+  237 000001BC         
+  238 000001BC E35200FF        CMP              R2, #255    ;if(blueComp > 255)
+                                                            
+  239 000001C0 9A000000        BLS              checkZero3  ;{
+  240 000001C4 E3A020FF        LDR              R2, =255    ; blueComp = 255
+  241 000001C8         ;}
+  242 000001C8         checkZero3
+  243 000001C8 E3520000        CMP              R2, #0      ;if(blueComp < 0)
+  244 000001CC 2A000000        BHS              endSubRout3 ;{
+  245 000001D0 E3A02000        LDR              R2, =0      ; blueComp = 0
+  246 000001D4         endSubRout3                          ;}
+  247 000001D4 E1820000        ORR              R0, R2, R0  ;blueComp = setBlue
+                                                            Component(pixel)
+  248 000001D8 E1A0A000        MOV              R10, R0     ;
+  249 000001DC E8BD8007        LDMFD            SP!, {R0-R2, PC}
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  250 000001E0         
+  251 000001E0                 END
+Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\a
+djust.d -o.\adjust.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include -
+IC:\Keil_v5\ARM\Inc\Philips --predefine="__EVAL SETA 1" --predefine="__MICROLIB
+ SETA 1" --predefine="__UVISION_VERSION SETA 521" --predefine="NO_CLOCK_SETUP S
+ETA 1" --predefine="NO_EMC_SETUP SETA 1" --predefine="RAM_INTVEC SETA 1" --pred
+efine="RAM_MODE SETA 1" --predefine="REMAP SETA 1" --list=.\adjust.lst Adjust.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+Adjust 00000000
+
+Symbol: Adjust
+   Definitions
+      At line 1 in file Adjust.s
+   Uses
+      None
+Comment: Adjust unused
+adjustBlue 000001A0
+
+Symbol: adjustBlue
+   Definitions
+      At line 229 in file Adjust.s
+   Uses
+      At line 141 in file Adjust.s
+Comment: adjustBlue used once
+adjustGreen 00000158
+
+Symbol: adjustGreen
+   Definitions
+      At line 193 in file Adjust.s
+   Uses
+      At line 140 in file Adjust.s
+Comment: adjustGreen used once
+adjustPixel 000000F8
+
+Symbol: adjustPixel
+   Definitions
+      At line 137 in file Adjust.s
+   Uses
+      At line 34 in file Adjust.s
+      At line 91 in file Adjust.s
+
+adjustRed 00000110
+
+Symbol: adjustRed
+   Definitions
+      At line 157 in file Adjust.s
+   Uses
+      At line 139 in file Adjust.s
+Comment: adjustRed used once
+checkNext 00000060
+
+Symbol: checkNext
+   Definitions
+      At line 38 in file Adjust.s
+   Uses
+      At line 31 in file Adjust.s
+      At line 33 in file Adjust.s
+
+checkNextPixel 00000098
+
+Symbol: checkNextPixel
+   Definitions
+      At line 82 in file Adjust.s
+   Uses
+      At line 39 in file Adjust.s
+Comment: checkNextPixel used once
+checkZero 0000013C
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+
+Symbol: checkZero
+   Definitions
+      At line 171 in file Adjust.s
+   Uses
+      At line 168 in file Adjust.s
+Comment: checkZero used once
+checkZero2 00000184
+
+Symbol: checkZero2
+   Definitions
+      At line 207 in file Adjust.s
+   Uses
+      At line 204 in file Adjust.s
+Comment: checkZero2 used once
+checkZero3 000001C8
+
+Symbol: checkZero3
+   Definitions
+      At line 242 in file Adjust.s
+   Uses
+      At line 239 in file Adjust.s
+Comment: checkZero3 used once
+endLoop 00000070
+
+Symbol: endLoop
+   Definitions
+      At line 43 in file Adjust.s
+   Uses
+      At line 26 in file Adjust.s
+Comment: endLoop used once
+endLoopH 000000F4
+
+Symbol: endLoopH
+   Definitions
+      At line 121 in file Adjust.s
+   Uses
+      At line 114 in file Adjust.s
+Comment: endLoopH used once
+endSub 000000B8
+
+Symbol: endSub
+   Definitions
+      At line 92 in file Adjust.s
+   Uses
+      At line 89 in file Adjust.s
+Comment: endSub used once
+endSubRout 00000148
+
+Symbol: endSubRout
+   Definitions
+      At line 175 in file Adjust.s
+   Uses
+      At line 173 in file Adjust.s
+Comment: endSubRout used once
+endSubRout2 00000190
+
+Symbol: endSubRout2
+   Definitions
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 211 in file Adjust.s
+   Uses
+      At line 209 in file Adjust.s
+Comment: endSubRout2 used once
+endSubRout3 000001D4
+
+Symbol: endSubRout3
+   Definitions
+      At line 246 in file Adjust.s
+   Uses
+      At line 244 in file Adjust.s
+Comment: endSubRout3 used once
+forOne 00000028
+
+Symbol: forOne
+   Definitions
+      At line 24 in file Adjust.s
+   Uses
+      At line 29 in file Adjust.s
+Comment: forOne used once
+forTwo 00000038
+
+Symbol: forTwo
+   Definitions
+      At line 28 in file Adjust.s
+   Uses
+      At line 37 in file Adjust.s
+      At line 42 in file Adjust.s
+
+getEndAddress 0000007C
+
+Symbol: getEndAddress
+   Definitions
+      At line 60 in file Adjust.s
+   Uses
+      At line 21 in file Adjust.s
+      At line 109 in file Adjust.s
+
+loopH 000000D4
+
+Symbol: loopH
+   Definitions
+      At line 112 in file Adjust.s
+   Uses
+      At line 120 in file Adjust.s
+Comment: loopH used once
+notSame 000000B4
+
+Symbol: notSame
+   Definitions
+      At line 90 in file Adjust.s
+   Uses
+      At line 87 in file Adjust.s
+Comment: notSame used once
+overwriteImage 000000BC
+
+Symbol: overwriteImage
+   Definitions
+      At line 105 in file Adjust.s
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Relocatable symbols
+
+   Uses
+      At line 45 in file Adjust.s
+Comment: overwriteImage used once
+start 00000000
+
+Symbol: start
+   Definitions
+      At line 10 in file Adjust.s
+   Uses
+      At line 7 in file Adjust.s
+Comment: start used once
+stop 00000078
+
+Symbol: stop
+   Definitions
+      At line 48 in file Adjust.s
+   Uses
+      At line 48 in file Adjust.s
+Comment: stop used once
+24 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+getPicAddr 00000000
+
+Symbol: getPicAddr
+   Definitions
+      At line 3 in file Adjust.s
+   Uses
+      At line 12 in file Adjust.s
+      At line 62 in file Adjust.s
+      At line 107 in file Adjust.s
+
+getPicHeight 00000000
+
+Symbol: getPicHeight
+   Definitions
+      At line 6 in file Adjust.s
+   Uses
+      At line 14 in file Adjust.s
+Comment: getPicHeight used once
+getPicWidth 00000000
+
+Symbol: getPicWidth
+   Definitions
+      At line 5 in file Adjust.s
+   Uses
+      At line 16 in file Adjust.s
+Comment: getPicWidth used once
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 2 in file Adjust.s
+   Uses
+      None
+Comment: main unused
+putPic 00000000
+
+Symbol: putPic
+   Definitions
+      At line 4 in file Adjust.s
+   Uses
+      At line 46 in file Adjust.s
+Comment: putPic used once
+5 symbols
+367 symbols in table

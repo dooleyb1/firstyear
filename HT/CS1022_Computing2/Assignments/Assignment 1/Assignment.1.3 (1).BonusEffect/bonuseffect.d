@@ -1,0 +1,1 @@
+.\bonuseffect.o: BonusEffect.s

@@ -1,0 +1,14 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+U:\Trinity\CS 2016-17\CS1021 Computing\Lab-4-2-Shift64\Shift64.uvproj
+Project File Date:  12/09/2016
+
+<h2>Output:</h2>
+Rebuild target 'External SDRAM'
+assembling Shift64.s...
+linking...
+Program Size: Code=848 RO-data=32 RW-data=4 ZI-data=4364  
+".\Shift64.axf" - 0 Errors, 0 Warning(s).

@@ -1,0 +1,1 @@
+.\adjust.o: Adjust.s

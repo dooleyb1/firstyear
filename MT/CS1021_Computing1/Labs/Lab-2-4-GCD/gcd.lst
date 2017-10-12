@@ -1,0 +1,109 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             GCD, CODE, READONLY
+    2 00000000                 IMPORT           main
+    3 00000000                 EXPORT           start
+    4 00000000         
+    5 00000000         start
+    6 00000000 E3A02012        LDR              R2, =0x00000012 ;load a
+    7 00000004 E3A0302A        LDR              R3, =0x0000002A ;load b
+    8 00000008 E3A00000        LDR              R0, =0      ;reset R0
+    9 0000000C         
+   10 0000000C         while
+   11 0000000C E1520003        CMP              R2, R3      ;while(a != b)
+   12 00000010 0A000004        BEQ              endwh       ;{
+   13 00000014 3A000001        BLO              true        ;if(a > b){
+   14 00000018 E0422003        SUB              R2, R2, R3  ;a = a - b
+   15 0000001C EAFFFFFA        B                while       ;}
+   16 00000020         true                                 ;else{
+   17 00000020 E0433002        SUB              R3, R3, R2  ;b = b -a
+   18 00000024 EAFFFFF8        B                while       ;}
+   19 00000028         endwh                                ;}
+   20 00000028 E1A00002        MOV              R0, R2      ;set R0 as the resu
+                                                            lt
+   21 0000002C EAFFFFFE 
+                       stop    B                stop
+   22 00000030         
+   23 00000030                 END
+Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\g
+cd.d -o.\gcd.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Ke
+il_v5\ARM\Inc\Philips --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 
+1" --predefine="__UVISION_VERSION SETA 521" --predefine="NO_CLOCK_SETUP SETA 1"
+ --predefine="NO_EMC_SETUP SETA 1" --predefine="RAM_INTVEC SETA 1" --predefine=
+"RAM_MODE SETA 1" --predefine="REMAP SETA 1" --list=.\gcd.lst GCD.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+GCD 00000000
+
+Symbol: GCD
+   Definitions
+      At line 1 in file GCD.s
+   Uses
+      None
+Comment: GCD unused
+endwh 00000028
+
+Symbol: endwh
+   Definitions
+      At line 19 in file GCD.s
+   Uses
+      At line 12 in file GCD.s
+Comment: endwh used once
+start 00000000
+
+Symbol: start
+   Definitions
+      At line 5 in file GCD.s
+   Uses
+      At line 3 in file GCD.s
+Comment: start used once
+stop 0000002C
+
+Symbol: stop
+   Definitions
+      At line 21 in file GCD.s
+   Uses
+      At line 21 in file GCD.s
+Comment: stop used once
+true 00000020
+
+Symbol: true
+   Definitions
+      At line 16 in file GCD.s
+   Uses
+      At line 13 in file GCD.s
+Comment: true used once
+while 0000000C
+
+Symbol: while
+   Definitions
+      At line 10 in file GCD.s
+   Uses
+      At line 15 in file GCD.s
+      At line 18 in file GCD.s
+
+6 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 2 in file GCD.s
+   Uses
+      None
+Comment: main unused
+1 symbol
+345 symbols in table

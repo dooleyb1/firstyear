@@ -1,0 +1,13 @@
+--cpu ARM7TDMI
+".\font5x7.o"
+".\lcd_grph.o"
+".\lcd_hw.o"
+".\retarget.o"
+".\serial.o"
+".\lpc2400.o"
+".\main.o"
+".\bonuseffect.o"
+--library_type=microlib --strict --scatter ".\BonusEffect.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\BonusEffect.map" -o .\BonusEffect.axf

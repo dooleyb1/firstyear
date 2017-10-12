@@ -1,0 +1,188 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             StatEval, CODE, READONLY
+    2 00000000                 IMPORT           main
+    3 00000000                 IMPORT           getkey
+    4 00000000                 IMPORT           sendchar
+    5 00000000                 EXPORT           start
+    6 00000000                 PRESERVE8
+    7 00000000         
+    8 00000000         start
+    9 00000000         
+   10 00000000 E3A0A00A        LDR              R10, =10    ; powerOf10
+   11 00000004 E3A08000        LDR              R8, =0      ; minNum
+   12 00000008 E3A09000        LDR              R9, =0      ; maxNum
+   13 0000000C E3A07000        LDR              R7, =0      ; sum
+   14 00000010 E3A05000        LDR              R5, =0      ; count
+   15 00000014 E3A06000        LDR              R6, =0      ; runningTotal
+   16 00000018         
+   17 00000018         read
+   18 00000018 EBFFFFFE        BL               getkey      ; read key from con
+                                                            sole
+   19 0000001C E350000D        CMP              R0, #0x0D   ; while (key != RET
+                                                            URN)
+   20 00000020 0A00000F        BEQ              endRead     ; {
+   21 00000024 E3500020        CMP              R0, #0x20   ; if (key = SPACE)
+   22 00000028 0A00000B        BEQ              count       ; branch to count
+   23 0000002C EBFFFFFE        BL               sendchar    ; echo key back to 
+                                                            console
+   24 00000030         
+   25 00000030 E006069A        MUL              R6, R10, R6 ; runningTotal * po
+                                                            werOf10
+   26 00000034 E2400030        SUB              R0, R0, #0x30 ; converting key 
+                                                            to decimal
+   27 00000038 E0804006        ADD              R4, R0, R6  ; key + runningTota
+                                                            l
+   28 0000003C         
+   29 0000003C E1540009        CMP              R4, R9      ; if (R4 > maxNum)
+   30 00000040 BA000000        BLT              checkmin    ; {
+   31 00000044 E1A09004        MOV              R9, R4      ; set R4 to maxNum
+   32 00000048         checkmin                             ; }
+   33 00000048 E1540008        CMP              R4, R8      ; if (R4 < minNum)
+   34 0000004C CA000000        BGT              notMinMax   ; {  
+   35 00000050 E1A08004        MOV              R8, R4      ; set R4 to minNum
+   36 00000054         notMinMax                            ; }
+   37 00000054         
+   38 00000054 E0847007        ADD              R7, R4, R7  ; sum
+   39 00000058 EAFFFFEE        B                read        ; }
+   40 0000005C         
+   41 0000005C         count
+   42 0000005C E2855001        ADD              R5, R5, #0x1 ; count++
+   43 00000060 EAFFFFEC        B                read
+   44 00000064         
+   45 00000064         
+   46 00000064         
+   47 00000064         endRead
+   48 00000064         
+   49 00000064         
+   50 00000064 EAFFFFFE 
+                       stop    B                stop
+   51 00000068         
+   52 00000068                 END
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\s
+tateval.d -o.\stateval.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Inclu
+de -IC:\Keil_v5\ARM\Inc\Philips --predefine="__EVAL SETA 1" --predefine="__MICR
+OLIB SETA 1" --predefine="__UVISION_VERSION SETA 521" --predefine="NO_CLOCK_SET
+UP SETA 1" --predefine="NO_EMC_SETUP SETA 1" --predefine="RAM_INTVEC SETA 1" --
+predefine="RAM_MODE SETA 1" --predefine="REMAP SETA 1" --list=.\stateval.lst St
+atEval.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+StatEval 00000000
+
+Symbol: StatEval
+   Definitions
+      At line 1 in file StatEval.s
+   Uses
+      None
+Comment: StatEval unused
+checkmin 00000048
+
+Symbol: checkmin
+   Definitions
+      At line 32 in file StatEval.s
+   Uses
+      At line 30 in file StatEval.s
+Comment: checkmin used once
+count 0000005C
+
+Symbol: count
+   Definitions
+      At line 41 in file StatEval.s
+   Uses
+      At line 22 in file StatEval.s
+Comment: count used once
+endRead 00000064
+
+Symbol: endRead
+   Definitions
+      At line 47 in file StatEval.s
+   Uses
+      At line 20 in file StatEval.s
+Comment: endRead used once
+notMinMax 00000054
+
+Symbol: notMinMax
+   Definitions
+      At line 36 in file StatEval.s
+   Uses
+      At line 34 in file StatEval.s
+Comment: notMinMax used once
+read 00000018
+
+Symbol: read
+   Definitions
+      At line 17 in file StatEval.s
+   Uses
+      At line 39 in file StatEval.s
+      At line 43 in file StatEval.s
+
+start 00000000
+
+Symbol: start
+   Definitions
+      At line 8 in file StatEval.s
+   Uses
+      At line 5 in file StatEval.s
+Comment: start used once
+stop 00000064
+
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+Symbol: stop
+   Definitions
+      At line 50 in file StatEval.s
+   Uses
+      At line 50 in file StatEval.s
+Comment: stop used once
+8 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+getkey 00000000
+
+Symbol: getkey
+   Definitions
+      At line 3 in file StatEval.s
+   Uses
+      At line 18 in file StatEval.s
+Comment: getkey used once
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 2 in file StatEval.s
+   Uses
+      None
+Comment: main unused
+sendchar 00000000
+
+Symbol: sendchar
+   Definitions
+      At line 4 in file StatEval.s
+   Uses
+      At line 23 in file StatEval.s
+Comment: sendchar used once
+3 symbols
+349 symbols in table

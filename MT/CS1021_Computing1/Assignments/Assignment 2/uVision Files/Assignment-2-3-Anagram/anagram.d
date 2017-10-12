@@ -1,0 +1,1 @@
+.\anagram.o: Anagram.s

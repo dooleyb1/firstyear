@@ -1,0 +1,192 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\Dooleyb1\Desktop\Assignments\MicroVision Templates\Assignment-1-1-ConsoleInput\ConsoleInput.uvproj
+Project File Date:  11/02/2016
+
+<h2>Output:</h2>
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=768 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=768 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=776 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Build target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(16): error: A1180E: Missing close quote
+".\ConsoleInput.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(16): error: A1180E: Missing close quote
+".\ConsoleInput.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(16): error: A1180E: Missing close quote
+ConsoleInput.s(20): error: A1112E: Expected address expression
+".\ConsoleInput.axf" - 2 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(16): error: A1517E: Unexpected operator equal to or equivalent to =
+".\ConsoleInput.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Build target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(16): warning: A1865W: '#' not seen before constant expression
+linking...
+Program Size: Code=784 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 1 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=784 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(26): error: A1477E: This register combination results in UNPREDICTABLE behaviour
+".\ConsoleInput.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=804 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(18): error: A1180E: Missing close quote
+".\ConsoleInput.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=796 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=804 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=776 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=776 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(21): error: A1477E: This register combination results in UNPREDICTABLE behaviour
+ConsoleInput.s(22): error: A1647E: Bad register name symbol, expected Integer register
+".\ConsoleInput.axf" - 2 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(20): error: A1180E: Missing close quote
+ConsoleInput.s(23): error: A1477E: This register combination results in UNPREDICTABLE behaviour
+ConsoleInput.s(24): error: A1647E: Bad register name symbol, expected Integer register
+".\ConsoleInput.axf" - 3 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(23): error: A1477E: This register combination results in UNPREDICTABLE behaviour
+ConsoleInput.s(24): error: A1647E: Bad register name symbol, expected Integer register
+".\ConsoleInput.axf" - 2 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(24): error: A1647E: Bad register name symbol, expected Integer register
+".\ConsoleInput.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(24): error: A1647E: Bad register name symbol, expected Integer register
+".\ConsoleInput.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(24): error: A1647E: Bad register name symbol, expected Integer register
+".\ConsoleInput.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(20): error: A1152E: Unexpected operator
+ConsoleInput.s(24): error: A1647E: Bad register name symbol, expected Integer register
+".\ConsoleInput.axf" - 2 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(24): error: A1647E: Bad register name symbol, expected Integer register
+".\ConsoleInput.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(24): error: A1647E: Bad register name symbol, expected Integer register
+".\ConsoleInput.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(24): error: A1647E: Bad register name symbol, expected Integer register
+".\ConsoleInput.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=788 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(10): error: A1180E: Missing close quote
+ConsoleInput.s(19): error: A1477E: This register combination results in UNPREDICTABLE behaviour
+".\ConsoleInput.axf" - 2 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+ConsoleInput.s(19): error: A1477E: This register combination results in UNPREDICTABLE behaviour
+".\ConsoleInput.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=788 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=788 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=788 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=812 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=812 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).
+Rebuild target 'Simulator'
+assembling ConsoleInput.s...
+linking...
+Program Size: Code=812 RO-data=32 RW-data=4 ZI-data=4364  
+".\ConsoleInput.axf" - 0 Errors, 0 Warning(s).

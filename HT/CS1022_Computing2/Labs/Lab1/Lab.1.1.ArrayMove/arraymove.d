@@ -1,0 +1,1 @@
+.\arraymove.o: ArrayMove.s

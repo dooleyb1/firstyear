@@ -1,0 +1,14 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+U:\My Documents\CS1021 Projects\Lab-1-2-AsciiAdd\AsciiAdd.uvproj
+Project File Date:  10/07/2016
+
+<h2>Output:</h2>
+Build target 'External SDRAM'
+assembling AsciiAdd.s...
+linking...
+Program Size: Code=776 RO-data=32 RW-data=4 ZI-data=4364  
+".\AsciiAdd.axf" - 0 Errors, 0 Warning(s).

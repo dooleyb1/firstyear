@@ -1,0 +1,1513 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             DisplayResult, CODE, READONLY
+    2 00000000                 IMPORT           main
+    3 00000000                 IMPORT           getkey
+    4 00000000                 IMPORT           sendchar
+    5 00000000                 EXPORT           start
+    6 00000000                 PRESERVE8
+    7 00000000         
+    8 00000000         start
+    9 00000000         
+   10 00000000 E3A0C000        LDR              R12, =0     ; dividend --< outP
+                                                            utDigit
+   11 00000004 E3A0B000        LDR              R11, =0     ; mean
+   12 00000008 E3A0A001        LDR              R10, =1     ; powerOf10
+   13 0000000C E3A09000        LDR              R9, =0      ; maxNum
+   14 00000010 E3E08102        LDR              R8, =0x7FFFFFFF ; minNum
+   15 00000014 E3A07000        LDR              R7, =0      ; sumOfNumbers
+   16 00000018 E3A0600A        LDR              R6, =10     ; number10
+   17 0000001C E3A05000        LDR              R5, =0      ; count
+   18 00000020 E3A04000        LDR              R4, =0      ; runningTotal
+   19 00000024         
+   20 00000024         
+   21 00000024         positiveRead
+   22 00000024 EBFFFFFE        BL               getkey      ; read key from con
+                                                            sole
+   23 00000028 E350000D        CMP              R0, #0x0D   ; while (key != RET
+                                                            URN)
+   24 0000002C 0A000006        BEQ              positiveInput ; {
+   25 00000030 E3500020        CMP              R0, #0x20   ; && while (key != 
+                                                            SPACE)
+   26 00000034 0A000004        BEQ              positiveInput ; 
+   27 00000038 EBFFFFFE        BL               sendchar    ; echo key back to 
+                                                            console
+   28 0000003C         
+   29 0000003C E0040496        MUL              R4, R6, R4  ; runningTotal * 10
+                                                            
+   30 00000040 E2400030        SUB              R0, R0, #0x30 ; converting key 
+                                                            to decimal
+   31 00000044 E0804004        ADD              R4, R0, R4  ; key + runningTota
+                                                            l
+   32 00000048 EAFFFFF5        B                positiveRead ; }
+   33 0000004C         
+   34 0000004C         
+   35 0000004C         positiveInput
+   36 0000004C E350000D        CMP              R0, #0x0D
+   37 00000050 1A00002C        BNE              posContinue
+   38 00000054 E3540000        CMP              R4, #0x00
+   39 00000058 1A00002A        BNE              posContinue
+   40 0000005C         
+   41 0000005C         ; // Prints error message to console 
+   42 0000005C         ; // if there is no input from user
+   43 0000005C         
+   44 0000005C E3A00045        LDR              R0, ='E'
+   45 00000060 EBFFFFFE        BL               sendchar
+   46 00000064 E3A00072        LDR              R0, ='r'
+   47 00000068 EBFFFFFE        BL               sendchar
+   48 0000006C E3A00072        LDR              R0, ='r'
+   49 00000070 EBFFFFFE        BL               sendchar
+   50 00000074 E3A0006F        LDR              R0, ='o'
+   51 00000078 EBFFFFFE        BL               sendchar
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   52 0000007C E3A00072        LDR              R0, ='r'
+   53 00000080 EBFFFFFE        BL               sendchar
+   54 00000084 E3A0002C        LDR              R0, =','
+   55 00000088 EBFFFFFE        BL               sendchar
+   56 0000008C E3A00020        LDR              R0, =' '
+   57 00000090 EBFFFFFE        BL               sendchar
+   58 00000094 E3A00049        LDR              R0, ='I'
+   59 00000098 EBFFFFFE        BL               sendchar
+   60 0000009C E3A0006E        LDR              R0, ='n'
+   61 000000A0 EBFFFFFE        BL               sendchar
+   62 000000A4 E3A00076        LDR              R0, ='v'
+   63 000000A8 EBFFFFFE        BL               sendchar
+   64 000000AC E3A00061        LDR              R0, ='a'
+   65 000000B0 EBFFFFFE        BL               sendchar
+   66 000000B4 E3A0006C        LDR              R0, ='l'
+   67 000000B8 EBFFFFFE        BL               sendchar
+   68 000000BC E3A00069        LDR              R0, ='i'
+   69 000000C0 EBFFFFFE        BL               sendchar
+   70 000000C4 E3A00064        LDR              R0, ='d'
+   71 000000C8 EBFFFFFE        BL               sendchar
+   72 000000CC E3A00020        LDR              R0, =' '
+   73 000000D0 EBFFFFFE        BL               sendchar
+   74 000000D4 E3A00049        LDR              R0, ='I'
+   75 000000D8 EBFFFFFE        BL               sendchar
+   76 000000DC E3A0006E        LDR              R0, ='n'
+   77 000000E0 EBFFFFFE        BL               sendchar
+   78 000000E4 E3A00070        LDR              R0, ='p'
+   79 000000E8 EBFFFFFE        BL               sendchar
+   80 000000EC E3A00075        LDR              R0, ='u'
+   81 000000F0 EBFFFFFE        BL               sendchar
+   82 000000F4 E3A00074        LDR              R0, ='t'
+   83 000000F8 EBFFFFFE        BL               sendchar
+   84 000000FC E3A0002E        LDR              R0, ='.'
+   85 00000100 EBFFFFFE        BL               sendchar
+   86 00000104 EA000153        B                endRead
+   87 00000108         
+   88 00000108         posContinue
+   89 00000108 EBFFFFFE        BL               sendchar    ; echo SPACE/ENTER 
+                                                            key back to console
+                                                            
+   90 0000010C E3550000        CMP              R5, #0      ; if (count == 0 
+   91 00000110 1A000003        BNE              increaseCount
+   92 00000114 E3540000        CMP              R4, #0
+   93 00000118 1A000001        BNE              increaseCount
+   94 0000011C E350000D        CMP              R0, #0x0D   ;    &&
+   95 00000120 0A000013        BEQ              printWordMean ;    key == ENTER
+                                                             endRead
+   96 00000124         increaseCount                        ;
+   97 00000124 E2855001        ADD              R5, R5, #0x1 ; count++
+   98 00000128 E0847007        ADD              R7, R4, R7  ; sum = sum + runni
+                                                            ngTotal
+   99 0000012C         
+  100 0000012C         minMaxCheck
+  101 0000012C E1540009        CMP              R4, R9      ; if (R4 >= maxNum)
+                                                            
+  102 00000130 BA000000        BLT              checkmin    ; {
+  103 00000134 E1A09004        MOV              R9, R4      ;  set maxNum to R4
+                                                            
+  104 00000138         
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+  105 00000138         checkmin
+  106 00000138 E1540008        CMP              R4, R8      ; else if (R4 <= mi
+                                                            nNum)
+  107 0000013C 8A000000        BHI              endMinMax   ; {  
+  108 00000140 E1A08004        MOV              R8, R4      ;  set minNum to R4
+                                                            
+  109 00000144         ; }
+  110 00000144         endMinMax
+  111 00000144 E3A04000        LDR              R4, =0      ;   ; reset R4 =0
+  112 00000148 E350000D        CMP              R0, #0x0D   ; if (key = RETURN)
+                                                            
+  113 0000014C 0A000000        BEQ              meanCompute ; { meanCompute }
+  114 00000150         ; else
+  115 00000150 EAFFFFB3        B                positiveRead ; (read again)
+  116 00000154         
+  117 00000154         meanCompute
+  118 00000154 E1A0C007        MOV              R12, R7     ; dividend == sumOf
+                                                            Numbers
+  119 00000158 E3550000        CMP              R5, #0      ; if ( count != 0)
+  120 0000015C 0A000004        BEQ              printWordMean ; {
+  121 00000160         
+  122 00000160         meanWhile
+  123 00000160 E15C0005        CMP              R12, R5     ;  while(dividend >
+                                                            = count)
+  124 00000164 BA000002        BLT              printWordMean ;  {
+  125 00000168 E28BB001        ADD              R11, R11, #1 
+                                                            ;   mean = mean + 1
+                                                            
+  126 0000016C E04CC005        SUB              R12, R12, R5 ;   dividend = div
+                                                            idend - count (divi
+                                                            sor)
+  127 00000170 EAFFFFFA        B                meanWhile   ; }
+  128 00000174         
+  129 00000174         printWordMean
+  130 00000174 E3A0000A        LDR              R0, =0xA    ; NewLine
+  131 00000178 EBFFFFFE        BL               sendchar
+  132 0000017C E3A0004D        LDR              R0, ='M'    ; M 
+  133 00000180 EBFFFFFE        BL               sendchar
+  134 00000184 E3A00065        LDR              R0, ='e'    ; e 
+  135 00000188 EBFFFFFE        BL               sendchar
+  136 0000018C E3A00061        LDR              R0, ='a'    ; a
+  137 00000190 EBFFFFFE        BL               sendchar
+  138 00000194 E3A0006E        LDR              R0, ='n'    ; n
+  139 00000198 EBFFFFFE        BL               sendchar
+  140 0000019C E3A0003D        LDR              R0, ='='    ; =
+  141 000001A0 EBFFFFFE        BL               sendchar
+  142 000001A4         
+  143 000001A4 E3A0C000        LDR              R12, =0     ; clear R12
+  144 000001A8 E35B0000        CMP              R11, #0     ; if ( mean == 0 )
+  145 000001AC 1A000002        BNE              meanPrintStart
+  146 000001B0 E3A00030        LDR              R0, =0x30   ;
+  147 000001B4 EBFFFFFE        BL               sendchar    ; print 0
+  148 000001B8 EA00002C        B                printWordCount
+  149 000001BC         
+  150 000001BC         ; // This next section uses an algorithm which detects t
+                       he
+  151 000001BC         ; // suitable power of 10 containing the first digit
+  152 000001BC         ; // and continues to print the value of all digits 
+  153 000001BC         ; // within the register in decimal form.
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+  154 000001BC         
+  155 000001BC         meanPrintStart                       ; else{
+  156 000001BC E3A0A001        LDR              R10, =1     ; powerOf10 = 1
+  157 000001C0 E3A0400A        LDR              R4, =10     ; 10xPowerOf10 = 10
+                                                            
+  158 000001C4         
+  159 000001C4         meanDigitCalc
+  160 000001C4 E35B0000        CMP              R11, #0     ; if (mean = 0)
+  161 000001C8 0A000028        BEQ              printWordCount ; displayCount
+  162 000001CC E15B000A        CMP              R11, R10    ; if (mean >= power
+                                                            Of10 
+  163 000001D0 BA000013        BLT              meanElse    ; &&
+  164 000001D4 E15B0004        CMP              R11, R4     ; mean < 10xPowerOf
+                                                            10)
+  165 000001D8 AA000011        BGE              meanElse    ; {
+  166 000001DC         
+  167 000001DC E28CC001        ADD              R12, R12, #1 ; outputDigit++
+  168 000001E0 E15B000A        CMP              R11, R10    ; if (mean == power
+                                                            Of10)
+  169 000001E4 1A000002        BNE              meanContinue ; &&
+  170 000001E8 E35B0001        CMP              R11, #1     ;     mean != 1)
+  171 000001EC 0A000008        BEQ              meanOutputPrint
+  172 000001F0 1A00000E        BNE              zeroFrontPrint
+  173 000001F4         
+  174 000001F4         meanContinue
+  175 000001F4 E04BB00A        SUB              R11, R11, R10 ; else ( mean - p
+                                                            owerOf10 )
+  176 000001F8 E15B000A        CMP              R11, R10    ; if (mean < powerO
+                                                            f10)
+  177 000001FC AAFFFFF0        BGE              meanDigitCalc ;
+  178 00000200 E1A0000C        MOV              R0, R12     ; print outputDigit
+                                                            
+  179 00000204 E2800030        ADD              R0, R0, #0x30
+  180 00000208 EBFFFFFE        BL               sendchar    ;
+  181 0000020C E3A0C000        LDR              R12, =0     ; clear R12
+  182 00000210 EAFFFFE9        B                meanPrintStart ;
+  183 00000214         
+  184 00000214         meanOutputPrint
+  185 00000214 E1A0000C        MOV              R0, R12     ; print outputDigit
+                                                            
+  186 00000218 E2800030        ADD              R0, R0, #0x30
+  187 0000021C EBFFFFFE        BL               sendchar    ;
+  188 00000220 EA000012        B                printWordCount ;
+  189 00000224         
+  190 00000224         meanElse                             ; else
+  191 00000224 E00A0A96        MUL              R10, R6, R10 ; powerOf10New = 1
+                                                            0 * powerOf10Old
+  192 00000228 E0040496        MUL              R4, R6, R4  ; 10xPowerOf10New =
+                                                             10 * 10xPowerOf10O
+                                                            ld
+  193 0000022C EAFFFFE4        B                meanDigitCalc
+  194 00000230         
+  195 00000230         zeroFrontPrint
+  196 00000230 E1A0000C        MOV              R0, R12     ; load outputDigit 
+                                                            into R0
+  197 00000234 E2800030        ADD              R0, R0, #0x30
+  198 00000238 EBFFFFFE        BL               sendchar
+  199 0000023C         
+  200 0000023C         ; // This next section allows digits ending in 0's to be
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+                       
+  201 0000023C         ; // displayed for example if the mean was 400
+  202 0000023C         
+  203 0000023C         zeroDigit
+  204 0000023C E3A0A001        LDR              R10, =1
+  205 00000240 E3A0400A        LDR              R4, =10
+  206 00000244         
+  207 00000244         meanZeroPrint
+  208 00000244 E15B0004        CMP              R11, R4     ; if ( mean = 10xPo
+                                                            werOf10 )
+  209 00000248 1A000005        BNE              meanZeroElse
+  210 0000024C E3A00030        LDR              R0, =0x30   ; load 0 into R0
+  211 00000250 EBFFFFFE        BL               sendchar    ; print 0
+  212 00000254 E1A0B00A        MOV              R11, R10    ; set newMean = pow
+                                                            erOf 10 (divide by 
+                                                            10)
+  213 00000258 E35B0001        CMP              R11, #1     ; if (newMean == 1)
+                                                            
+  214 0000025C 0A000003        BEQ              printWordCount ; endRead
+  215 00000260 EAFFFFF5        B                zeroDigit
+  216 00000264         
+  217 00000264         meanZeroElse
+  218 00000264 E00A0A96        MUL              R10, R6, R10 ; powerOf10New = 1
+                                                            0 * powerOf10Old
+  219 00000268 E0040496        MUL              R4, R6, R4  ; 10xPowerOf10New =
+                                                             10 * 10xPowerOf10O
+                                                            ld
+  220 0000026C EAFFFFF4        B                meanZeroPrint
+  221 00000270         
+  222 00000270         ; // The algorithm used above is here repeated for 
+  223 00000270         ; // the statistical measure of count 
+  224 00000270         
+  225 00000270         printWordCount
+  226 00000270 E3A00020        LDR              R0, =0x20   ; SPACE
+  227 00000274 EBFFFFFE        BL               sendchar
+  228 00000278 E3A0000A        LDR              R0, =0xA    ; NewLine
+  229 0000027C EBFFFFFE        BL               sendchar
+  230 00000280 E3A00043        LDR              R0, ='C'    ; C 
+  231 00000284 EBFFFFFE        BL               sendchar
+  232 00000288 E3A0006F        LDR              R0, ='o'    ; o 
+  233 0000028C EBFFFFFE        BL               sendchar
+  234 00000290 E3A00075        LDR              R0, ='u'    ; u
+  235 00000294 EBFFFFFE        BL               sendchar
+  236 00000298 E3A0006E        LDR              R0, ='n'    ; n
+  237 0000029C EBFFFFFE        BL               sendchar
+  238 000002A0 E3A00074        LDR              R0, ='t'    ; t
+  239 000002A4 EBFFFFFE        BL               sendchar
+  240 000002A8 E3A0003D        LDR              R0, ='='    ; =
+  241 000002AC EBFFFFFE        BL               sendchar
+  242 000002B0         
+  243 000002B0 E3A0C000        LDR              R12, =0     ; clear R12
+  244 000002B4 E3550000        CMP              R5, #0      ; if ( count == 0 )
+                                                            
+  245 000002B8 1A000002        BNE              countPrintStart
+  246 000002BC E3A00030        LDR              R0, =0x30   ;
+  247 000002C0 EBFFFFFE        BL               sendchar    ; print 0
+  248 000002C4 EA00002C        B                printWordSum
+  249 000002C8         
+  250 000002C8         
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  251 000002C8         countPrintStart
+  252 000002C8 E3A0A001        LDR              R10, =1     ; powerOf10 = 1
+  253 000002CC E3A0400A        LDR              R4, =10     ; 10xPowerOf10 = 10
+                                                            
+  254 000002D0         
+  255 000002D0         countDigit
+  256 000002D0 E3550000        CMP              R5, #0      ; if (count = 0)
+  257 000002D4 0A000028        BEQ              printWordSum ; endRead
+  258 000002D8 E155000A        CMP              R5, R10     ; if (count >= powe
+                                                            rOf10 
+  259 000002DC BA000013        BLT              countElse   ; &&
+  260 000002E0 E1550004        CMP              R5, R4      ;    count < 10xPow
+                                                            erOf10)
+  261 000002E4 AA000011        BGE              countElse   ; {
+  262 000002E8         
+  263 000002E8 E28CC001        ADD              R12, R12, #1 ; outputDigit++
+  264 000002EC E155000A        CMP              R5, R10     ; if (count == powe
+                                                            rOf10)
+  265 000002F0 1A000002        BNE              continueCount ; &&
+  266 000002F4 E3550001        CMP              R5, #1      ;     count != 1)
+  267 000002F8 0A000008        BEQ              countOutputNum
+  268 000002FC 1A00000E        BNE              countFrontZero
+  269 00000300         
+  270 00000300         continueCount
+  271 00000300 E045500A        SUB              R5, R5, R10 ; else ( count - po
+                                                            werOf10 )
+  272 00000304 E155000A        CMP              R5, R10     ; if (count < power
+                                                            Of10)
+  273 00000308 AAFFFFF0        BGE              countDigit  ;
+  274 0000030C E1A0000C        MOV              R0, R12     ; print outputDigit
+                                                            
+  275 00000310 E2800030        ADD              R0, R0, #0x30
+  276 00000314 EBFFFFFE        BL               sendchar    ;
+  277 00000318 E3A0C000        LDR              R12, =0     ; clear R12
+  278 0000031C EAFFFFE9        B                countPrintStart ;
+  279 00000320         
+  280 00000320         countOutputNum
+  281 00000320 E1A0000C        MOV              R0, R12     ; print outputDigit
+                                                            
+  282 00000324 E2800030        ADD              R0, R0, #0x30
+  283 00000328 EBFFFFFE        BL               sendchar    ;
+  284 0000032C EA000012        B                printWordSum ;
+  285 00000330         
+  286 00000330         countElse                            ; else
+  287 00000330 E00A0A96        MUL              R10, R6, R10 ; powerOf10New = 1
+                                                            0 * powerOf10Old
+  288 00000334 E0040496        MUL              R4, R6, R4  ; 10xPowerOf10New =
+                                                             10 * 10xPowerOf10O
+                                                            ld
+  289 00000338 EAFFFFE4        B                countDigit
+  290 0000033C         
+  291 0000033C         ; // This section determines how many  
+  292 0000033C         ; // zero's to display using the same method
+  293 0000033C         
+  294 0000033C         countFrontZero
+  295 0000033C E1A0000C        MOV              R0, R12     ; load outputDigit 
+                                                            into R0
+  296 00000340 E2800030        ADD              R0, R0, #0x30
+  297 00000344 EBFFFFFE        BL               sendchar
+
+
+
+ARM Macro Assembler    Page 7 
+
+
+  298 00000348         
+  299 00000348         countZeroStart
+  300 00000348 E3A0A001        LDR              R10, =1
+  301 0000034C E3A0400A        LDR              R4, =10
+  302 00000350         
+  303 00000350         countZeroPrint
+  304 00000350 E1550004        CMP              R5, R4      ; if ( count = 10xP
+                                                            owerOf10 )
+  305 00000354 1A000005        BNE              countZeroElse
+  306 00000358 E3A00030        LDR              R0, =0x30   ; load 0 into R0
+  307 0000035C EBFFFFFE        BL               sendchar    ; print 0
+  308 00000360 E1A0500A        MOV              R5, R10     ; set newCount = po
+                                                            werOf 10 (divide by
+                                                             10)
+  309 00000364 E3550001        CMP              R5, #1      ; if (newCount == 1
+                                                            )
+  310 00000368 0A000003        BEQ              printWordSum ; endRead
+  311 0000036C EAFFFFF5        B                countZeroStart
+  312 00000370         
+  313 00000370         countZeroElse
+  314 00000370 E00A0A96        MUL              R10, R6, R10 ; powerOf10New = 1
+                                                            0 * powerOf10Old
+  315 00000374 E0040496        MUL              R4, R6, R4  ; 10xPowerOf10New =
+                                                             10 * 10xPowerOf10O
+                                                            ld
+  316 00000378 EAFFFFF4        B                countZeroPrint
+  317 0000037C         
+  318 0000037C         
+  319 0000037C         ; // The algorithm used above is here repeated for 
+  320 0000037C         ; // the statistical measure of sum 
+  321 0000037C         
+  322 0000037C         printWordSum
+  323 0000037C E3A0000A        LDR              R0, =0xA    ; NewLine
+  324 00000380 EBFFFFFE        BL               sendchar
+  325 00000384 E3A00053        LDR              R0, ='S'    ; S 
+  326 00000388 EBFFFFFE        BL               sendchar
+  327 0000038C E3A00075        LDR              R0, ='u'    ; u 
+  328 00000390 EBFFFFFE        BL               sendchar
+  329 00000394 E3A0006D        LDR              R0, ='m'    ; m
+  330 00000398 EBFFFFFE        BL               sendchar
+  331 0000039C E3A0003D        LDR              R0, ='='    ; =
+  332 000003A0 EBFFFFFE        BL               sendchar
+  333 000003A4         
+  334 000003A4 E3A0C000        LDR              R12, =0     ; clear R12
+  335 000003A8 E3570000        CMP              R7, #0      ; if ( sum == 0 )
+  336 000003AC 1A000002        BNE              sumPrintStart
+  337 000003B0 E3A00030        LDR              R0, =0x30   ;
+  338 000003B4 EBFFFFFE        BL               sendchar    ; print 0
+  339 000003B8 EA00002C        B                printWordMin
+  340 000003BC         
+  341 000003BC         
+  342 000003BC         sumPrintStart
+  343 000003BC E3A0A001        LDR              R10, =1     ; powerOf10 = 1
+  344 000003C0 E3A0400A        LDR              R4, =10     ; 10xPowerOf10 = 10
+                                                            
+  345 000003C4         
+  346 000003C4         sumDigit
+  347 000003C4 E3570000        CMP              R7, #0      ; if (sum = 0)
+  348 000003C8 0A000028        BEQ              printWordMin ; endRead
+
+
+
+ARM Macro Assembler    Page 8 
+
+
+  349 000003CC E157000A        CMP              R7, R10     ; if (sum>= powerOf
+                                                            10 
+  350 000003D0 BA000013        BLT              sumElse     ; &&
+  351 000003D4 E1570004        CMP              R7, R4      ;    sum < 10xPower
+                                                            Of10)
+  352 000003D8 AA000011        BGE              sumElse     ; {
+  353 000003DC         
+  354 000003DC E28CC001        ADD              R12, R12, #1 ; outputDigit++
+  355 000003E0 E157000A        CMP              R7, R10     ; if (sum == powerO
+                                                            f10)
+  356 000003E4 1A000002        BNE              sumContinue ; &&
+  357 000003E8 E3570001        CMP              R7, #1      ;     sum != 1)
+  358 000003EC 0A000008        BEQ              sumOutputNum
+  359 000003F0 1A00000E        BNE              sumFrontZero
+  360 000003F4         
+  361 000003F4         sumContinue
+  362 000003F4 E047700A        SUB              R7, R7, R10 ; else ( sum - powe
+                                                            rOf10 )
+  363 000003F8 E157000A        CMP              R7, R10     ; if ( sum < powerO
+                                                            f10)
+  364 000003FC AAFFFFF0        BGE              sumDigit    ;
+  365 00000400 E1A0000C        MOV              R0, R12     ; print outputDigit
+                                                            
+  366 00000404 E2800030        ADD              R0, R0, #0x30
+  367 00000408 EBFFFFFE        BL               sendchar    ;
+  368 0000040C E3A0C000        LDR              R12, =0     ; clear R12
+  369 00000410 EAFFFFE9        B                sumPrintStart ;
+  370 00000414         
+  371 00000414         sumOutputNum
+  372 00000414 E1A0000C        MOV              R0, R12     ; print outputDigit
+                                                            
+  373 00000418 E2800030        ADD              R0, R0, #0x30
+  374 0000041C EBFFFFFE        BL               sendchar    ;
+  375 00000420 EA000012        B                printWordMin ;
+  376 00000424         
+  377 00000424         sumElse                              ; else
+  378 00000424 E00A0A96        MUL              R10, R6, R10 ; powerOf10New = 1
+                                                            0 * powerOf10Old
+  379 00000428 E0040496        MUL              R4, R6, R4  ; 10xPowerOf10New =
+                                                             10 * 10xPowerOf10O
+                                                            ld
+  380 0000042C EAFFFFE4        B                sumDigit
+  381 00000430         
+  382 00000430         ; // This section determines how many  
+  383 00000430         ; // zero's to display using the same method
+  384 00000430         
+  385 00000430         sumFrontZero
+  386 00000430 E1A0000C        MOV              R0, R12     ; load outputDigit 
+                                                            into R0
+  387 00000434 E2800030        ADD              R0, R0, #0x30
+  388 00000438 EBFFFFFE        BL               sendchar
+  389 0000043C         
+  390 0000043C         sumZeroStart
+  391 0000043C E3A0A001        LDR              R10, =1
+  392 00000440 E3A0400A        LDR              R4, =10
+  393 00000444         
+  394 00000444         sumZeroPrint
+  395 00000444 E1570004        CMP              R7, R4      ; if ( sum = 10xPow
+                                                            erOf10 )
+
+
+
+ARM Macro Assembler    Page 9 
+
+
+  396 00000448 1A000005        BNE              sumZeroElse
+  397 0000044C E3A00030        LDR              R0, =0x30   ; load 0 into R0
+  398 00000450 EBFFFFFE        BL               sendchar    ; print 0
+  399 00000454 E1A0700A        MOV              R7, R10     ; set newSum = powe
+                                                            rOf 10 (divide by 1
+                                                            0)
+  400 00000458 E3570001        CMP              R7, #1      ; if (newSum == 1)
+  401 0000045C 0A000003        BEQ              printWordMin ; endRead
+  402 00000460 EAFFFFF5        B                sumZeroStart
+  403 00000464         
+  404 00000464         sumZeroElse
+  405 00000464 E00A0A96        MUL              R10, R6, R10 ; powerOf10New = 1
+                                                            0 * powerOf10Old
+  406 00000468 E0040496        MUL              R4, R6, R4  ; 10xPowerOf10New =
+                                                             10 * 10xPowerOf10O
+                                                            ld
+  407 0000046C EAFFFFF4        B                sumZeroPrint
+  408 00000470         
+  409 00000470         ; // The algorithm used above is here repeated for 
+  410 00000470         ; // the statistical measure of min 
+  411 00000470         
+  412 00000470         printWordMin
+  413 00000470 E3A0000A        LDR              R0, =0xA    ; NewLine
+  414 00000474 EBFFFFFE        BL               sendchar
+  415 00000478 E3A0004D        LDR              R0, ='M'    ; M
+  416 0000047C EBFFFFFE        BL               sendchar
+  417 00000480 E3A00069        LDR              R0, ='i'    ; i 
+  418 00000484 EBFFFFFE        BL               sendchar
+  419 00000488 E3A0006E        LDR              R0, ='n'    ; n
+  420 0000048C EBFFFFFE        BL               sendchar
+  421 00000490 E3A0003D        LDR              R0, ='='    ; =
+  422 00000494 EBFFFFFE        BL               sendchar
+  423 00000498         
+  424 00000498 E3A0C000        LDR              R12, =0     ; clear R12
+  425 0000049C E3580000        CMP              R8, #0      ; if ( min == 0 )
+  426 000004A0 1A000002        BNE              minPrintStart
+  427 000004A4 E3A00030        LDR              R0, =0x30   ;
+  428 000004A8 EBFFFFFE        BL               sendchar    ; print 0
+  429 000004AC EA00002C        B                printWordMax
+  430 000004B0         
+  431 000004B0         
+  432 000004B0         minPrintStart
+  433 000004B0 E3A0A001        LDR              R10, =1     ; powerOf10 = 1
+  434 000004B4 E3A0400A        LDR              R4, =10     ; 10xPowerOf10 = 10
+                                                            
+  435 000004B8         
+  436 000004B8         minDigit
+  437 000004B8 E3580000        CMP              R8, #0      ; if (min = 0)
+  438 000004BC 0A000028        BEQ              printWordMax ; endRead
+  439 000004C0 E158000A        CMP              R8, R10     ; if (min >= powerO
+                                                            f10 
+  440 000004C4 BA000013        BLT              minElse     ; &&
+  441 000004C8 E1580004        CMP              R8, R4      ;    min < 10xPower
+                                                            Of10)
+  442 000004CC AA000011        BGE              minElse     ; {
+  443 000004D0         
+  444 000004D0 E28CC001        ADD              R12, R12, #1 ; outputDigit++
+  445 000004D4 E158000A        CMP              R8, R10     ; if (min == powerO
+                                                            f10)
+
+
+
+ARM Macro Assembler    Page 10 
+
+
+  446 000004D8 1A000002        BNE              minContinue ; &&
+  447 000004DC E3580001        CMP              R8, #1      ;     min != 1)
+  448 000004E0 0A000008        BEQ              minOutputNum
+  449 000004E4 1A00000E        BNE              minFrontZero
+  450 000004E8         
+  451 000004E8         minContinue
+  452 000004E8 E048800A        SUB              R8, R8, R10 ; else ( min - powe
+                                                            rOf10 )
+  453 000004EC E158000A        CMP              R8, R10     ; if (min < powerOf
+                                                            10)
+  454 000004F0 AAFFFFF0        BGE              minDigit    ;
+  455 000004F4 E1A0000C        MOV              R0, R12     ; print outputDigit
+                                                            
+  456 000004F8 E2800030        ADD              R0, R0, #0x30
+  457 000004FC EBFFFFFE        BL               sendchar    ;
+  458 00000500 E3A0C000        LDR              R12, =0     ; clear R12
+  459 00000504 EAFFFFE9        B                minPrintStart ;
+  460 00000508         
+  461 00000508         minOutputNum
+  462 00000508 E1A0000C        MOV              R0, R12     ; print outputDigit
+                                                            
+  463 0000050C E2800030        ADD              R0, R0, #0x30
+  464 00000510 EBFFFFFE        BL               sendchar    ;
+  465 00000514 EA000012        B                printWordMax ;
+  466 00000518         
+  467 00000518         minElse                              ; else
+  468 00000518 E00A0A96        MUL              R10, R6, R10 ; powerOf10New = 1
+                                                            0 * powerOf10Old
+  469 0000051C E0040496        MUL              R4, R6, R4  ; 10xPowerOf10New =
+                                                             10 * 10xPowerOf10O
+                                                            ld
+  470 00000520 EAFFFFE4        B                minDigit
+  471 00000524         
+  472 00000524         ; // This section determines how many  
+  473 00000524         ; // zero's to display using the same method
+  474 00000524         
+  475 00000524         minFrontZero
+  476 00000524 E1A0000C        MOV              R0, R12     ; load outputDigit 
+                                                            into R0
+  477 00000528 E2800030        ADD              R0, R0, #0x30
+  478 0000052C EBFFFFFE        BL               sendchar
+  479 00000530         
+  480 00000530         minZeroStart
+  481 00000530 E3A0A001        LDR              R10, =1
+  482 00000534 E3A0400A        LDR              R4, =10
+  483 00000538         
+  484 00000538         minZeroPrint
+  485 00000538 E1580004        CMP              R8, R4      ; if ( min = 10xPow
+                                                            erOf10 )
+  486 0000053C 1A000005        BNE              minZeroElse
+  487 00000540 E3A00030        LDR              R0, =0x30   ; load 0 into R0
+  488 00000544 EBFFFFFE        BL               sendchar    ; print 0
+  489 00000548 E1A0800A        MOV              R8, R10     ; set newMin = powe
+                                                            rOf 10 (divide by 1
+                                                            0)
+  490 0000054C E3580001        CMP              R8, #1      ; if (newMin == 1)
+  491 00000550 0A000003        BEQ              printWordMax ; endRead
+  492 00000554 EAFFFFF5        B                minZeroStart
+  493 00000558         
+
+
+
+ARM Macro Assembler    Page 11 
+
+
+  494 00000558         minZeroElse
+  495 00000558 E00A0A96        MUL              R10, R6, R10 ; powerOf10New = 1
+                                                            0 * powerOf10Old
+  496 0000055C E0040496        MUL              R4, R6, R4  ; 10xPowerOf10New =
+                                                             10 * 10xPowerOf10O
+                                                            ld
+  497 00000560 EAFFFFF4        B                minZeroPrint
+  498 00000564         
+  499 00000564         ; // The algorithm used above is here repeated for 
+  500 00000564         ; // the statistical measure of max 
+  501 00000564         
+  502 00000564         printWordMax
+  503 00000564 E3A0000A        LDR              R0, =0xA    ; NewLine
+  504 00000568 EBFFFFFE        BL               sendchar
+  505 0000056C E3A0004D        LDR              R0, ='M'    ; M
+  506 00000570 EBFFFFFE        BL               sendchar
+  507 00000574 E3A00061        LDR              R0, ='a'    ; a 
+  508 00000578 EBFFFFFE        BL               sendchar
+  509 0000057C E3A00078        LDR              R0, ='x'    ; x
+  510 00000580 EBFFFFFE        BL               sendchar
+  511 00000584 E3A0003D        LDR              R0, ='='    ; =
+  512 00000588 EBFFFFFE        BL               sendchar
+  513 0000058C         
+  514 0000058C E3A0C000        LDR              R12, =0     ; clear R12
+  515 00000590 E3590000        CMP              R9, #0      ; if ( max == 0 )
+  516 00000594 1A000002        BNE              maxPrintStart
+  517 00000598 E3A00030        LDR              R0, =0x30   ;
+  518 0000059C EBFFFFFE        BL               sendchar    ; print 0
+  519 000005A0 EA00002C        B                endRead
+  520 000005A4         
+  521 000005A4         
+  522 000005A4         maxPrintStart
+  523 000005A4 E3A0A001        LDR              R10, =1     ; powerOf10 = 1
+  524 000005A8 E3A0400A        LDR              R4, =10     ; 10xPowerOf10 = 10
+                                                            
+  525 000005AC         
+  526 000005AC         maxDigit
+  527 000005AC E3590000        CMP              R9, #0      ; if (max = 0)
+  528 000005B0 0A000028        BEQ              endRead     ; endRead
+  529 000005B4 E159000A        CMP              R9, R10     ; if (max >= powerO
+                                                            f10 
+  530 000005B8 BA000013        BLT              maxElse     ; &&
+  531 000005BC E1590004        CMP              R9, R4      ;    max < 10xPower
+                                                            Of10)
+  532 000005C0 AA000011        BGE              maxElse     ; {
+  533 000005C4         
+  534 000005C4 E28CC001        ADD              R12, R12, #1 ; outputDigit++
+  535 000005C8 E159000A        CMP              R9, R10     ; if (max == powerO
+                                                            f10)
+  536 000005CC 1A000002        BNE              maxContinue ; &&
+  537 000005D0 E3590001        CMP              R9, #1      ;     max != 1)
+  538 000005D4 0A000008        BEQ              maxOutputNum
+  539 000005D8 1A00000E        BNE              maxFrontZero
+  540 000005DC         
+  541 000005DC         maxContinue
+  542 000005DC E049900A        SUB              R9, R9, R10 ; else ( max - powe
+                                                            rOf10 )
+  543 000005E0 E159000A        CMP              R9, R10     ; if (max < powerOf
+                                                            10)
+
+
+
+ARM Macro Assembler    Page 12 
+
+
+  544 000005E4 AAFFFFF0        BGE              maxDigit    ;
+  545 000005E8 E1A0000C        MOV              R0, R12     ; print outputDigit
+                                                            
+  546 000005EC E2800030        ADD              R0, R0, #0x30
+  547 000005F0 EBFFFFFE        BL               sendchar    ;
+  548 000005F4 E3A0C000        LDR              R12, =0     ; clear R12
+  549 000005F8 EAFFFFE9        B                maxPrintStart ;
+  550 000005FC         
+  551 000005FC         maxOutputNum
+  552 000005FC E1A0000C        MOV              R0, R12     ; print outputDigit
+                                                            
+  553 00000600 E2800030        ADD              R0, R0, #0x30
+  554 00000604 EBFFFFFE        BL               sendchar    ;
+  555 00000608 EA000012        B                endRead     ;
+  556 0000060C         
+  557 0000060C         maxElse                              ; else
+  558 0000060C E00A0A96        MUL              R10, R6, R10 ; powerOf10New = 1
+                                                            0 * powerOf10Old
+  559 00000610 E0040496        MUL              R4, R6, R4  ; 10xPowerOf10New =
+                                                             10 * 10xPowerOf10O
+                                                            ld
+  560 00000614 EAFFFFE4        B                maxDigit
+  561 00000618         
+  562 00000618         ; // This section determines how many  
+  563 00000618         ; // zero's to display using the same method
+  564 00000618         
+  565 00000618         maxFrontZero
+  566 00000618 E1A0000C        MOV              R0, R12     ; load outputDigit 
+                                                            into R0
+  567 0000061C E2800030        ADD              R0, R0, #0x30
+  568 00000620 EBFFFFFE        BL               sendchar
+  569 00000624         
+  570 00000624         maxZeroStart
+  571 00000624 E3A0A001        LDR              R10, =1
+  572 00000628 E3A0400A        LDR              R4, =10
+  573 0000062C         
+  574 0000062C         maxZeroPrint
+  575 0000062C E1590004        CMP              R9, R4      ; if ( max = 10xPow
+                                                            erOf10 )
+  576 00000630 1A000005        BNE              maxZeroElse
+  577 00000634 E3A00030        LDR              R0, =0x30   ; load 0 into R0
+  578 00000638 EBFFFFFE        BL               sendchar    ; print 0
+  579 0000063C E1A0900A        MOV              R9, R10     ; set newMax = powe
+                                                            rOf 10 (divide by 1
+                                                            0)
+  580 00000640 E3590001        CMP              R9, #1      ; if (newMax == 1)
+  581 00000644 0A000003        BEQ              endRead     ; endRead
+  582 00000648 EAFFFFF5        B                maxZeroStart
+  583 0000064C         
+  584 0000064C         maxZeroElse
+  585 0000064C E00A0A96        MUL              R10, R6, R10 ; powerOf10New = 1
+                                                            0 * powerOf10Old
+  586 00000650 E0040496        MUL              R4, R6, R4  ; 10xPowerOf10New =
+                                                             10 * 10xPowerOf10O
+                                                            ld
+  587 00000654 EAFFFFF4        B                maxZeroPrint
+  588 00000658         
+  589 00000658         endRead                              ;  endRead
+  590 00000658         ; }
+
+
+
+ARM Macro Assembler    Page 13 
+
+
+  591 00000658 EAFFFFFE 
+                       stop    B                stop
+  592 0000065C         
+  593 0000065C                 END
+Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\d
+isplayresult.d -o.\displayresult.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\C
+MSIS\Include -IC:\Keil_v5\ARM\Inc\Philips --predefine="__EVAL SETA 1" --predefi
+ne="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 521" --predefine="NO
+_CLOCK_SETUP SETA 1" --predefine="NO_EMC_SETUP SETA 1" --predefine="RAM_INTVEC 
+SETA 1" --predefine="RAM_MODE SETA 1" --predefine="REMAP SETA 1" --list=.\displ
+ayresult.lst DisplayResult.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+DisplayResult 00000000
+
+Symbol: DisplayResult
+   Definitions
+      At line 1 in file DisplayResult.s
+   Uses
+      None
+Comment: DisplayResult unused
+checkmin 00000138
+
+Symbol: checkmin
+   Definitions
+      At line 105 in file DisplayResult.s
+   Uses
+      At line 102 in file DisplayResult.s
+Comment: checkmin used once
+continueCount 00000300
+
+Symbol: continueCount
+   Definitions
+      At line 270 in file DisplayResult.s
+   Uses
+      At line 265 in file DisplayResult.s
+Comment: continueCount used once
+countDigit 000002D0
+
+Symbol: countDigit
+   Definitions
+      At line 255 in file DisplayResult.s
+   Uses
+      At line 273 in file DisplayResult.s
+      At line 289 in file DisplayResult.s
+
+countElse 00000330
+
+Symbol: countElse
+   Definitions
+      At line 286 in file DisplayResult.s
+   Uses
+      At line 259 in file DisplayResult.s
+      At line 261 in file DisplayResult.s
+
+countFrontZero 0000033C
+
+Symbol: countFrontZero
+   Definitions
+      At line 294 in file DisplayResult.s
+   Uses
+      At line 268 in file DisplayResult.s
+Comment: countFrontZero used once
+countOutputNum 00000320
+
+Symbol: countOutputNum
+   Definitions
+      At line 280 in file DisplayResult.s
+   Uses
+      At line 267 in file DisplayResult.s
+Comment: countOutputNum used once
+countPrintStart 000002C8
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+
+Symbol: countPrintStart
+   Definitions
+      At line 251 in file DisplayResult.s
+   Uses
+      At line 245 in file DisplayResult.s
+      At line 278 in file DisplayResult.s
+
+countZeroElse 00000370
+
+Symbol: countZeroElse
+   Definitions
+      At line 313 in file DisplayResult.s
+   Uses
+      At line 305 in file DisplayResult.s
+Comment: countZeroElse used once
+countZeroPrint 00000350
+
+Symbol: countZeroPrint
+   Definitions
+      At line 303 in file DisplayResult.s
+   Uses
+      At line 316 in file DisplayResult.s
+Comment: countZeroPrint used once
+countZeroStart 00000348
+
+Symbol: countZeroStart
+   Definitions
+      At line 299 in file DisplayResult.s
+   Uses
+      At line 311 in file DisplayResult.s
+Comment: countZeroStart used once
+endMinMax 00000144
+
+Symbol: endMinMax
+   Definitions
+      At line 110 in file DisplayResult.s
+   Uses
+      At line 107 in file DisplayResult.s
+Comment: endMinMax used once
+endRead 00000658
+
+Symbol: endRead
+   Definitions
+      At line 589 in file DisplayResult.s
+   Uses
+      At line 86 in file DisplayResult.s
+      At line 519 in file DisplayResult.s
+      At line 528 in file DisplayResult.s
+      At line 555 in file DisplayResult.s
+      At line 581 in file DisplayResult.s
+
+increaseCount 00000124
+
+Symbol: increaseCount
+   Definitions
+      At line 96 in file DisplayResult.s
+   Uses
+      At line 91 in file DisplayResult.s
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 93 in file DisplayResult.s
+
+maxContinue 000005DC
+
+Symbol: maxContinue
+   Definitions
+      At line 541 in file DisplayResult.s
+   Uses
+      At line 536 in file DisplayResult.s
+Comment: maxContinue used once
+maxDigit 000005AC
+
+Symbol: maxDigit
+   Definitions
+      At line 526 in file DisplayResult.s
+   Uses
+      At line 544 in file DisplayResult.s
+      At line 560 in file DisplayResult.s
+
+maxElse 0000060C
+
+Symbol: maxElse
+   Definitions
+      At line 557 in file DisplayResult.s
+   Uses
+      At line 530 in file DisplayResult.s
+      At line 532 in file DisplayResult.s
+
+maxFrontZero 00000618
+
+Symbol: maxFrontZero
+   Definitions
+      At line 565 in file DisplayResult.s
+   Uses
+      At line 539 in file DisplayResult.s
+Comment: maxFrontZero used once
+maxOutputNum 000005FC
+
+Symbol: maxOutputNum
+   Definitions
+      At line 551 in file DisplayResult.s
+   Uses
+      At line 538 in file DisplayResult.s
+Comment: maxOutputNum used once
+maxPrintStart 000005A4
+
+Symbol: maxPrintStart
+   Definitions
+      At line 522 in file DisplayResult.s
+   Uses
+      At line 516 in file DisplayResult.s
+      At line 549 in file DisplayResult.s
+
+maxZeroElse 0000064C
+
+Symbol: maxZeroElse
+   Definitions
+      At line 584 in file DisplayResult.s
+   Uses
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 576 in file DisplayResult.s
+Comment: maxZeroElse used once
+maxZeroPrint 0000062C
+
+Symbol: maxZeroPrint
+   Definitions
+      At line 574 in file DisplayResult.s
+   Uses
+      At line 587 in file DisplayResult.s
+Comment: maxZeroPrint used once
+maxZeroStart 00000624
+
+Symbol: maxZeroStart
+   Definitions
+      At line 570 in file DisplayResult.s
+   Uses
+      At line 582 in file DisplayResult.s
+Comment: maxZeroStart used once
+meanCompute 00000154
+
+Symbol: meanCompute
+   Definitions
+      At line 117 in file DisplayResult.s
+   Uses
+      At line 113 in file DisplayResult.s
+Comment: meanCompute used once
+meanContinue 000001F4
+
+Symbol: meanContinue
+   Definitions
+      At line 174 in file DisplayResult.s
+   Uses
+      At line 169 in file DisplayResult.s
+Comment: meanContinue used once
+meanDigitCalc 000001C4
+
+Symbol: meanDigitCalc
+   Definitions
+      At line 159 in file DisplayResult.s
+   Uses
+      At line 177 in file DisplayResult.s
+      At line 193 in file DisplayResult.s
+
+meanElse 00000224
+
+Symbol: meanElse
+   Definitions
+      At line 190 in file DisplayResult.s
+   Uses
+      At line 163 in file DisplayResult.s
+      At line 165 in file DisplayResult.s
+
+meanOutputPrint 00000214
+
+Symbol: meanOutputPrint
+   Definitions
+      At line 184 in file DisplayResult.s
+   Uses
+      At line 171 in file DisplayResult.s
+
+
+
+ARM Macro Assembler    Page 5 Alphabetic symbol ordering
+Relocatable symbols
+
+Comment: meanOutputPrint used once
+meanPrintStart 000001BC
+
+Symbol: meanPrintStart
+   Definitions
+      At line 155 in file DisplayResult.s
+   Uses
+      At line 145 in file DisplayResult.s
+      At line 182 in file DisplayResult.s
+
+meanWhile 00000160
+
+Symbol: meanWhile
+   Definitions
+      At line 122 in file DisplayResult.s
+   Uses
+      At line 127 in file DisplayResult.s
+Comment: meanWhile used once
+meanZeroElse 00000264
+
+Symbol: meanZeroElse
+   Definitions
+      At line 217 in file DisplayResult.s
+   Uses
+      At line 209 in file DisplayResult.s
+Comment: meanZeroElse used once
+meanZeroPrint 00000244
+
+Symbol: meanZeroPrint
+   Definitions
+      At line 207 in file DisplayResult.s
+   Uses
+      At line 220 in file DisplayResult.s
+Comment: meanZeroPrint used once
+minContinue 000004E8
+
+Symbol: minContinue
+   Definitions
+      At line 451 in file DisplayResult.s
+   Uses
+      At line 446 in file DisplayResult.s
+Comment: minContinue used once
+minDigit 000004B8
+
+Symbol: minDigit
+   Definitions
+      At line 436 in file DisplayResult.s
+   Uses
+      At line 454 in file DisplayResult.s
+      At line 470 in file DisplayResult.s
+
+minElse 00000518
+
+Symbol: minElse
+   Definitions
+      At line 467 in file DisplayResult.s
+   Uses
+      At line 440 in file DisplayResult.s
+      At line 442 in file DisplayResult.s
+
+
+
+ARM Macro Assembler    Page 6 Alphabetic symbol ordering
+Relocatable symbols
+
+
+minFrontZero 00000524
+
+Symbol: minFrontZero
+   Definitions
+      At line 475 in file DisplayResult.s
+   Uses
+      At line 449 in file DisplayResult.s
+Comment: minFrontZero used once
+minMaxCheck 0000012C
+
+Symbol: minMaxCheck
+   Definitions
+      At line 100 in file DisplayResult.s
+   Uses
+      None
+Comment: minMaxCheck unused
+minOutputNum 00000508
+
+Symbol: minOutputNum
+   Definitions
+      At line 461 in file DisplayResult.s
+   Uses
+      At line 448 in file DisplayResult.s
+Comment: minOutputNum used once
+minPrintStart 000004B0
+
+Symbol: minPrintStart
+   Definitions
+      At line 432 in file DisplayResult.s
+   Uses
+      At line 426 in file DisplayResult.s
+      At line 459 in file DisplayResult.s
+
+minZeroElse 00000558
+
+Symbol: minZeroElse
+   Definitions
+      At line 494 in file DisplayResult.s
+   Uses
+      At line 486 in file DisplayResult.s
+Comment: minZeroElse used once
+minZeroPrint 00000538
+
+Symbol: minZeroPrint
+   Definitions
+      At line 484 in file DisplayResult.s
+   Uses
+      At line 497 in file DisplayResult.s
+Comment: minZeroPrint used once
+minZeroStart 00000530
+
+Symbol: minZeroStart
+   Definitions
+      At line 480 in file DisplayResult.s
+   Uses
+      At line 492 in file DisplayResult.s
+Comment: minZeroStart used once
+posContinue 00000108
+
+
+
+ARM Macro Assembler    Page 7 Alphabetic symbol ordering
+Relocatable symbols
+
+
+Symbol: posContinue
+   Definitions
+      At line 88 in file DisplayResult.s
+   Uses
+      At line 37 in file DisplayResult.s
+      At line 39 in file DisplayResult.s
+
+positiveInput 0000004C
+
+Symbol: positiveInput
+   Definitions
+      At line 35 in file DisplayResult.s
+   Uses
+      At line 24 in file DisplayResult.s
+      At line 26 in file DisplayResult.s
+
+positiveRead 00000024
+
+Symbol: positiveRead
+   Definitions
+      At line 21 in file DisplayResult.s
+   Uses
+      At line 32 in file DisplayResult.s
+      At line 115 in file DisplayResult.s
+
+printWordCount 00000270
+
+Symbol: printWordCount
+   Definitions
+      At line 225 in file DisplayResult.s
+   Uses
+      At line 148 in file DisplayResult.s
+      At line 161 in file DisplayResult.s
+      At line 188 in file DisplayResult.s
+      At line 214 in file DisplayResult.s
+
+printWordMax 00000564
+
+Symbol: printWordMax
+   Definitions
+      At line 502 in file DisplayResult.s
+   Uses
+      At line 429 in file DisplayResult.s
+      At line 438 in file DisplayResult.s
+      At line 465 in file DisplayResult.s
+      At line 491 in file DisplayResult.s
+
+printWordMean 00000174
+
+Symbol: printWordMean
+   Definitions
+      At line 129 in file DisplayResult.s
+   Uses
+      At line 95 in file DisplayResult.s
+      At line 120 in file DisplayResult.s
+      At line 124 in file DisplayResult.s
+
+printWordMin 00000470
+
+
+
+ARM Macro Assembler    Page 8 Alphabetic symbol ordering
+Relocatable symbols
+
+
+Symbol: printWordMin
+   Definitions
+      At line 412 in file DisplayResult.s
+   Uses
+      At line 339 in file DisplayResult.s
+      At line 348 in file DisplayResult.s
+      At line 375 in file DisplayResult.s
+      At line 401 in file DisplayResult.s
+
+printWordSum 0000037C
+
+Symbol: printWordSum
+   Definitions
+      At line 322 in file DisplayResult.s
+   Uses
+      At line 248 in file DisplayResult.s
+      At line 257 in file DisplayResult.s
+      At line 284 in file DisplayResult.s
+      At line 310 in file DisplayResult.s
+
+start 00000000
+
+Symbol: start
+   Definitions
+      At line 8 in file DisplayResult.s
+   Uses
+      At line 5 in file DisplayResult.s
+Comment: start used once
+stop 00000658
+
+Symbol: stop
+   Definitions
+      At line 591 in file DisplayResult.s
+   Uses
+      At line 591 in file DisplayResult.s
+Comment: stop used once
+sumContinue 000003F4
+
+Symbol: sumContinue
+   Definitions
+      At line 361 in file DisplayResult.s
+   Uses
+      At line 356 in file DisplayResult.s
+Comment: sumContinue used once
+sumDigit 000003C4
+
+Symbol: sumDigit
+   Definitions
+      At line 346 in file DisplayResult.s
+   Uses
+      At line 364 in file DisplayResult.s
+      At line 380 in file DisplayResult.s
+
+sumElse 00000424
+
+Symbol: sumElse
+   Definitions
+      At line 377 in file DisplayResult.s
+
+
+
+ARM Macro Assembler    Page 9 Alphabetic symbol ordering
+Relocatable symbols
+
+   Uses
+      At line 350 in file DisplayResult.s
+      At line 352 in file DisplayResult.s
+
+sumFrontZero 00000430
+
+Symbol: sumFrontZero
+   Definitions
+      At line 385 in file DisplayResult.s
+   Uses
+      At line 359 in file DisplayResult.s
+Comment: sumFrontZero used once
+sumOutputNum 00000414
+
+Symbol: sumOutputNum
+   Definitions
+      At line 371 in file DisplayResult.s
+   Uses
+      At line 358 in file DisplayResult.s
+Comment: sumOutputNum used once
+sumPrintStart 000003BC
+
+Symbol: sumPrintStart
+   Definitions
+      At line 342 in file DisplayResult.s
+   Uses
+      At line 336 in file DisplayResult.s
+      At line 369 in file DisplayResult.s
+
+sumZeroElse 00000464
+
+Symbol: sumZeroElse
+   Definitions
+      At line 404 in file DisplayResult.s
+   Uses
+      At line 396 in file DisplayResult.s
+Comment: sumZeroElse used once
+sumZeroPrint 00000444
+
+Symbol: sumZeroPrint
+   Definitions
+      At line 394 in file DisplayResult.s
+   Uses
+      At line 407 in file DisplayResult.s
+Comment: sumZeroPrint used once
+sumZeroStart 0000043C
+
+Symbol: sumZeroStart
+   Definitions
+      At line 390 in file DisplayResult.s
+   Uses
+      At line 402 in file DisplayResult.s
+Comment: sumZeroStart used once
+zeroDigit 0000023C
+
+Symbol: zeroDigit
+   Definitions
+      At line 203 in file DisplayResult.s
+   Uses
+
+
+
+ARM Macro Assembler    Page 10 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 215 in file DisplayResult.s
+Comment: zeroDigit used once
+zeroFrontPrint 00000230
+
+Symbol: zeroFrontPrint
+   Definitions
+      At line 195 in file DisplayResult.s
+   Uses
+      At line 172 in file DisplayResult.s
+Comment: zeroFrontPrint used once
+63 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+getkey 00000000
+
+Symbol: getkey
+   Definitions
+      At line 3 in file DisplayResult.s
+   Uses
+      At line 22 in file DisplayResult.s
+Comment: getkey used once
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 2 in file DisplayResult.s
+   Uses
+      None
+Comment: main unused
+sendchar 00000000
+
+Symbol: sendchar
+   Definitions
+      At line 4 in file DisplayResult.s
+   Uses
+      At line 27 in file DisplayResult.s
+      At line 45 in file DisplayResult.s
+      At line 47 in file DisplayResult.s
+      At line 49 in file DisplayResult.s
+      At line 51 in file DisplayResult.s
+      At line 53 in file DisplayResult.s
+      At line 55 in file DisplayResult.s
+      At line 57 in file DisplayResult.s
+      At line 59 in file DisplayResult.s
+      At line 61 in file DisplayResult.s
+      At line 63 in file DisplayResult.s
+      At line 65 in file DisplayResult.s
+      At line 67 in file DisplayResult.s
+      At line 69 in file DisplayResult.s
+      At line 71 in file DisplayResult.s
+      At line 73 in file DisplayResult.s
+      At line 75 in file DisplayResult.s
+      At line 77 in file DisplayResult.s
+      At line 79 in file DisplayResult.s
+      At line 81 in file DisplayResult.s
+      At line 83 in file DisplayResult.s
+      At line 85 in file DisplayResult.s
+      At line 89 in file DisplayResult.s
+      At line 131 in file DisplayResult.s
+      At line 133 in file DisplayResult.s
+      At line 135 in file DisplayResult.s
+      At line 137 in file DisplayResult.s
+      At line 139 in file DisplayResult.s
+      At line 141 in file DisplayResult.s
+      At line 147 in file DisplayResult.s
+      At line 180 in file DisplayResult.s
+      At line 187 in file DisplayResult.s
+      At line 198 in file DisplayResult.s
+      At line 211 in file DisplayResult.s
+      At line 227 in file DisplayResult.s
+      At line 229 in file DisplayResult.s
+      At line 231 in file DisplayResult.s
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+External symbols
+
+      At line 233 in file DisplayResult.s
+      At line 235 in file DisplayResult.s
+      At line 237 in file DisplayResult.s
+      At line 239 in file DisplayResult.s
+      At line 241 in file DisplayResult.s
+      At line 247 in file DisplayResult.s
+      At line 276 in file DisplayResult.s
+      At line 283 in file DisplayResult.s
+      At line 297 in file DisplayResult.s
+      At line 307 in file DisplayResult.s
+      At line 324 in file DisplayResult.s
+      At line 326 in file DisplayResult.s
+      At line 328 in file DisplayResult.s
+      At line 330 in file DisplayResult.s
+      At line 332 in file DisplayResult.s
+      At line 338 in file DisplayResult.s
+      At line 367 in file DisplayResult.s
+      At line 374 in file DisplayResult.s
+      At line 388 in file DisplayResult.s
+      At line 398 in file DisplayResult.s
+      At line 414 in file DisplayResult.s
+      At line 416 in file DisplayResult.s
+      At line 418 in file DisplayResult.s
+      At line 420 in file DisplayResult.s
+      At line 422 in file DisplayResult.s
+      At line 428 in file DisplayResult.s
+      At line 457 in file DisplayResult.s
+      At line 464 in file DisplayResult.s
+      At line 478 in file DisplayResult.s
+      At line 488 in file DisplayResult.s
+      At line 504 in file DisplayResult.s
+      At line 506 in file DisplayResult.s
+      At line 508 in file DisplayResult.s
+      At line 510 in file DisplayResult.s
+      At line 512 in file DisplayResult.s
+      At line 518 in file DisplayResult.s
+      At line 547 in file DisplayResult.s
+      At line 554 in file DisplayResult.s
+      At line 568 in file DisplayResult.s
+      At line 578 in file DisplayResult.s
+
+3 symbols
+404 symbols in table

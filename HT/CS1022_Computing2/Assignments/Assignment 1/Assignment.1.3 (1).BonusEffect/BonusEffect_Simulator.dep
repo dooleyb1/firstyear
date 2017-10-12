@@ -1,0 +1,37 @@
+Dependencies for Project 'BonusEffect', Target 'Simulator': (DO NOT MODIFY !)
+F (.\LCD\font5x7.c)(0x58C1AF63)(-c --cpu ARM7TDMI -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I.\LCD-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\Philips-D__UVISION_VERSION="516"-o .\font5x7.o --omf_browse .\font5x7.crf --depend .\font5x7.d)
+I (C:\Keil_v5\ARM\Inc\Philips\LPC24xx.H)(0x559D2F66)
+I (LCD\font_macro.h)(0x58C1AF63)
+F (.\LCD\lcd_grph.c)(0x58C1AF63)(-c --cpu ARM7TDMI -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I.\LCD-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\Philips-D__UVISION_VERSION="516"-o .\lcd_grph.o --omf_browse .\lcd_grph.crf --depend .\lcd_grph.d)
+I (C:\Keil_v5\ARM\Inc\Philips\LPC24xx.H)(0x559D2F66)
+I (.\LCD\general.h)(0x58C1AF63)
+I (LCD\lcd_hw.h)(0x58C1AF63)
+I (LCD\lcd_grph.h)(0x58C1AF63)
+I (LCD\font5x7.h)(0x58C1AF63)
+F (.\LCD\lcd_hw.c)(0x58C1AF63)(-c --cpu ARM7TDMI -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I.\LCD-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\Philips-D__UVISION_VERSION="516"-o .\lcd_hw.o --omf_browse .\lcd_hw.crf --depend .\lcd_hw.d)
+I (C:\Keil_v5\ARM\Inc\Philips\LPC24xx.H)(0x559D2F66)
+I (LCD\lcd_hw.h)(0x58C1AF63)
+I (.\LCD\general.h)(0x58C1AF63)
+I (.\LCD\config.h)(0x58C1AF63)
+F (.\LCD\config.h)(0x58C1AF63)()
+F (.\LCD\font_macro.h)(0x58C1AF63)()
+F (.\LCD\font5x7.h)(0x58C1AF63)()
+F (.\LCD\general.h)(0x58C1AF63)()
+F (.\LCD\lcd_grph.h)(0x58C1AF63)()
+F (.\LCD\lcd_hw.h)(0x58C1AF63)()
+F (.\support\crest.h)(0x58C1AF63)()
+F (.\support\Retarget.c)(0x58C1AF63)(-c --cpu ARM7TDMI -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I.\LCD-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\Philips-D__UVISION_VERSION="516"-o .\retarget.o --omf_browse .\retarget.crf --depend .\retarget.d)
+I (C:\Keil_v5\ARM\ARMCC_505u2\include\stdio.h)(0x54C2B638)
+I (C:\Keil_v5\ARM\ARMCC_505u2\include\rt_misc.h)(0x54C2B638)
+I (C:\Keil_v5\ARM\ARMCC_505u2\include\stddef.h)(0x54C2B638)
+I (C:\Keil_v5\ARM\ARMCC_505u2\include\stdint.h)(0x54C2B638)
+F (.\support\Serial.c)(0x58C1AF63)(-c --cpu ARM7TDMI -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I.\LCD-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\Philips-D__UVISION_VERSION="516"-o .\serial.o --omf_browse .\serial.crf --depend .\serial.d)
+I (C:\Keil_v5\ARM\Inc\Philips\LPC23xx.H)(0x559D2F66)
+F (.\support\LPC2400.s)(0x58C1AF63)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g --apcs=interwork --pd "__MICROLIB SETA 1"-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\Philips--pd "__UVISION_VERSION SETA 516" --pd "NO_CLOCK_SETUP SETA 1" --pd "NO_EMC_SETUP SETA 1" --pd "RAM_INTVEC SETA 1" --pd "RAM_MODE SETA 1" --pd "REMAP SETA 1"--list .\lpc2400.lst --xref -o .\lpc2400.o --depend .\lpc2400.d)
+F (.\support\main.c)(0x58C1AF63)(-c --cpu ARM7TDMI -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I.\LCD-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\Philips-D__UVISION_VERSION="516"-o .\main.o --omf_browse .\main.crf --depend .\main.d)
+I (C:\Keil_v5\ARM\Inc\Philips\LPC23xx.H)(0x559D2F66)
+I (.\LCD\lcd_hw.h)(0x58C1AF63)
+I (.\LCD\lcd_grph.h)(0x58C1AF63)
+I (support\crest.h)(0x58C1AF63)
+I (C:\Keil_v5\ARM\ARMCC_505u2\include\stdio.h)(0x54C2B638)
+F (.\BonusEffect.s)(0x58C1B5B7)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g --apcs=interwork --pd "__MICROLIB SETA 1"-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\Philips--pd "__UVISION_VERSION SETA 516" --pd "NO_CLOCK_SETUP SETA 1" --pd "NO_EMC_SETUP SETA 1" --pd "RAM_INTVEC SETA 1" --pd "RAM_MODE SETA 1" --pd "REMAP SETA 1"--list .\bonuseffect.lst --xref -o .\bonuseffect.o --depend .\bonuseffect.d)

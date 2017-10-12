@@ -1,0 +1,6 @@
+--cpu Cortex-M0
+"..\libcs1021\libcs1021.lib"
+".\firstprogram.o"
+--entry Reset_Handler --first __Vectors --strict --summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\FirstProgram.map" -o .\FirstProgram.axf

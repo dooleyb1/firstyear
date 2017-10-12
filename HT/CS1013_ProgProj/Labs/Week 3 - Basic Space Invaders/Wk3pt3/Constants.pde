@@ -1,0 +1,3 @@
+int SCREEN_X=1280;
+int SCREEN_Y=720;
+}

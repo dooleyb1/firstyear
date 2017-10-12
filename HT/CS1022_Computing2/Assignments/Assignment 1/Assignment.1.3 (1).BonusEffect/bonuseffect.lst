@@ -1,0 +1,635 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             BonusEffect, CODE, READONLY
+    2 00000000                 IMPORT           main
+    3 00000000                 IMPORT           getPicAddr
+    4 00000000                 IMPORT           putPic
+    5 00000000                 IMPORT           getPicWidth
+    6 00000000                 IMPORT           getPicHeight
+    7 00000000                 EXPORT           start
+    8 00000000         
+    9 00000000         start
+   10 00000000         
+   11 00000000 EBFFFFFE        BL               getPicAddr  ; load the start ad
+                                                            dress of the image 
+                                                            in R4
+   12 00000004 E1A04000        MOV              R4, R0
+   13 00000008 EBFFFFFE        BL               getPicHeight ; load the height 
+                                                            of the image (rows)
+                                                             in R5
+   14 0000000C E1A05000        MOV              R5, R0
+   15 00000010 EBFFFFFE        BL               getPicWidth ; load the width of
+                                                             the image (columns
+                                                            ) in R6
+   16 00000014 E1A06000        MOV              R6, R0
+   17 00000018         
+   18 00000018 E3A03014        LDR              R3, =20     ; threshold = 120
+   19 0000001C         
+   20 0000001C E3E01000        LDR              R1, =-1     ; for(j=0;
+   21 00000020 E2811001 
+                       forOne  ADD              R1, R1, #1  ; 
+   22 00000024 E1510005        CMP              R1, R5      ;   j<image.Height;
+                                                             j++)
+   23 00000028 AA000029        BGE              endLoop     ; {
+   24 0000002C E3A02000        LDR              R2, =0      ;  for(i=0;
+   25 00000030 E1520006 
+                       forTwo  CMP              R2, R6      ;     i<image.Width
+                                                            ; i++)
+   26 00000034 AAFFFFF9        BGE              forOne      ;   {
+   27 00000038 EB000027        BL               getRed      ;  redVal = red(i,j
+                                                            )
+   28 0000003C EB00002C        BL               getRedRight ;  redValRight = re
+                                                            d(i+1,j)
+   29 00000040 E049700A        SUB              R7, R9, R10 ;  redDifference = 
+                                                            redVal - redRight
+   30 00000044 E1570003        CMP              R7, R3      ;  if(redDifference
+                                                             < threshold
+   31 00000048 BA00000A        BLT              endIfOne    ;   endLoop
+   32 0000004C EB00002E        BL               getGreen    ;  greenVal = green
+                                                            (i,j)
+   33 00000050 EB000033        BL               getGreenRight ;  greenValRight 
+                                                            = green(i+1,j)
+   34 00000054 E049700A        SUB              R7, R9, R10 ;  greenDifference 
+                                                            = greenVal - greenR
+                                                            ight
+   35 00000058 E1570003        CMP              R7, R3      ;  if(greenDifferen
+                                                            ce < threshold
+   36 0000005C BA000005        BLT              endIfOne    ;   endLoop
+   37 00000060 EB000035        BL               getBlue     ;  blueVal = blue(i
+                                                            ,j)
+   38 00000064 EB000039        BL               getBlueRight ;  blueValRight = 
+                                                            blue(i+1,j)
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   39 00000068 E049700A        SUB              R7, R9, R10 ;  blueDifference =
+                                                             blueVal - blueRigh
+                                                            t
+   40 0000006C E1570003        CMP              R7, R3      ;  if(blueDifferenc
+                                                            e < threshold
+   41 00000070 BA000000        BLT              endIfOne    ;   endLoop
+   42 00000074         ;  else()
+   43 00000074 EA00000E        B                edgeFoundSet ;  setPixelWhite
+   44 00000078         endIfOne                             ;  }
+   45 00000078         
+   46 00000078 EB000017        BL               getRed      ;  redVal = red(i,j
+                                                            )
+   47 0000007C EB000038        BL               getRedBelow ;  redValRight = re
+                                                            d(i,j+1)
+   48 00000080 E049700A        SUB              R7, R9, R10 ;  redDifference = 
+                                                            redVal - redRight
+   49 00000084 E1570003        CMP              R7, R3      ;  if(redDifference
+                                                             < threshold
+   50 00000088 BA00000D        BLT              edgeNotFoundSet ;   endLoop
+   51 0000008C EB00001E        BL               getGreen    ;  greenVal = green
+                                                            (i,j)
+   52 00000090 EB00003B        BL               getGreenBelow ;  greenValRight 
+                                                            = green(i,j+1)
+   53 00000094 E049700A        SUB              R7, R9, R10 ;  greenDifference 
+                                                            = greenVal - greenR
+                                                            ight
+   54 00000098 E1570003        CMP              R7, R3      ;  if(greenDifferen
+                                                            ce < threshold
+   55 0000009C BA000008        BLT              edgeNotFoundSet ;   endLoop
+   56 000000A0 EB000025        BL               getBlue     ;  blueVal = blue(i
+                                                            ,j)
+   57 000000A4 EB00003D        BL               getBlueBelow ;  blueValRight = 
+                                                            blue(i,j+1)
+   58 000000A8 E049700A        SUB              R7, R9, R10 ;  blueDifference =
+                                                             blueVal - blueRigh
+                                                            t
+   59 000000AC E1570003        CMP              R7, R3      ;  if(blueDifferenc
+                                                            e < threshold
+   60 000000B0 BA000003        BLT              edgeNotFoundSet ;   endLoop
+   61 000000B4         
+   62 000000B4         
+   63 000000B4         edgeFoundSet
+   64 000000B4 EB00003F        BL               setEdgeWhite
+   65 000000B8 E2844004        ADD              R4, R4, #4
+   66 000000BC E2822001        ADD              R2, R2, #1
+   67 000000C0 EAFFFFDA        B                forTwo
+   68 000000C4         
+   69 000000C4         edgeNotFoundSet
+   70 000000C4 EB00003F        BL               setEdgeBlack
+   71 000000C8 E2822001        ADD              R2, R2, #1
+   72 000000CC E2844004        ADD              R4, R4, #4
+   73 000000D0 EAFFFFD6        B                forTwo      ; }
+   74 000000D4         endLoop                              ;}
+   75 000000D4         
+   76 000000D4 EBFFFFFE        BL               putPic      ; re-display the up
+                                                            dated image
+   77 000000D8         
+   78 000000D8 EAFFFFFE 
+                       stop    B                stop
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+   79 000000DC         
+   80 000000DC         ;getRed Subroutine
+   81 000000DC         ;
+   82 000000DC         ;Gets and returns the Red Component value of a pixel at 
+                       pixelAddress
+   83 000000DC         ;
+   84 000000DC         ;Parameters:
+   85 000000DC         ;R4= pixelAddress
+   86 000000DC         ;
+   87 000000DC         ;Returns;
+   88 000000DC         ;R8= redComponent
+   89 000000DC         getRed
+   90 000000DC E92D407F        STMFD            SP!, {R0-R6, LR}
+   91 000000E0 E3A018FF        LDR              R1, =0x00FF0000 ;R1 = redMask
+   92 000000E4 E5943000        LDR              R3, [R4]    ;pixel = loadPixelV
+                                                            alue(pixelAddress)
+   93 000000E8 E0032001        AND              R2, R3, R1  ;redComp = getRedCo
+                                                            mponent(pixel)
+   94 000000EC E1A09822        LSR              R9, R2, #16 ;shiftRight(redComp
+                                                            , 24)
+   95 000000F0 E8BD807F        LDMFD            SP!, {R0-R6, PC}
+   96 000000F4         
+   97 000000F4         ;getRedRight Subroutine
+   98 000000F4         ;
+   99 000000F4         ;Gets and returns the Red Component value of a pixel at 
+                       pixelAddress+1
+  100 000000F4         ;
+  101 000000F4         ;Parameters:
+  102 000000F4         ;R4= pixelAddress
+  103 000000F4         ;
+  104 000000F4         ;Returns;
+  105 000000F4         ;R9= redRightComponent
+  106 000000F4         getRedRight
+  107 000000F4 E92D407F        STMFD            SP!, {R0-R6, LR}
+  108 000000F8 E3A018FF        LDR              R1, =0x00FF0000 ;R1 = redMask
+  109 000000FC E5943004        LDR              R3, [R4, #4] ;pixel = loadPixel
+                                                            Value(pixelAddress+
+                                                            4)
+  110 00000100 E0032001        AND              R2, R3, R1  ;redComp = getRedCo
+                                                            mponent(pixel)
+  111 00000104 E1A0A822        LSR              R10, R2, #16 ;shiftRight(redCom
+                                                            p, 24)
+  112 00000108 E8BD807F        LDMFD            SP!, {R0-R6, PC}
+  113 0000010C         
+  114 0000010C         ;getGreen Subroutine
+  115 0000010C         ;
+  116 0000010C         ;Gets and returns the Green Component value of a pixel a
+                       t pixelAddress
+  117 0000010C         ;
+  118 0000010C         ;Parameters:
+  119 0000010C         ;R4= pixelAddress
+  120 0000010C         ;
+  121 0000010C         ;Returns;
+  122 0000010C         ;R9= greenComponent
+  123 0000010C         getGreen
+  124 0000010C E92D407F        STMFD            SP!, {R0-R6, LR}
+  125 00000110 E3A018FF        LDR              R1, =0x00FF0000 ;R1 = greenMask
+                                                            
+  126 00000114 E5943000        LDR              R3, [R4]    ;pixel = loadPixelV
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+                                                            alue(pixelAddress)
+  127 00000118 E0032001        AND              R2, R3, R1  ;redComp = getGreen
+                                                            Component(pixel)
+  128 0000011C E1A09422        LSR              R9, R2, #8  ;shiftRight(greenCo
+                                                            mp, 24)
+  129 00000120 E8BD807F        LDMFD            SP!, {R0-R6, PC}
+  130 00000124         
+  131 00000124         ;getGreenRight Subroutine
+  132 00000124         ;
+  133 00000124         ;Gets and returns the green Component value of a pixel a
+                       t pixelAddress+1
+  134 00000124         ;
+  135 00000124         ;Parameters:
+  136 00000124         ;R4= pixelAddress
+  137 00000124         ;
+  138 00000124         ;Returns;
+  139 00000124         ;R8= greenRightComponent
+  140 00000124         getGreenRight
+  141 00000124 E92D407F        STMFD            SP!, {R0-R6, LR}
+  142 00000128 E3A01CFF        LDR              R1, =0x0000FF00 ;R1 = greenMask
+                                                            
+  143 0000012C E5943004        LDR              R3, [R4, #4] ;pixel = loadPixel
+                                                            Value(pixelAddress+
+                                                            4)
+  144 00000130 E0032001        AND              R2, R3, R1  ;greenComp = getGre
+                                                            enComponent(pixel)
+  145 00000134 E1A0A422        LSR              R10, R2, #8 ;shiftRight(greenCo
+                                                            mp, 8)
+  146 00000138 E8BD807F        LDMFD            SP!, {R0-R6, PC}
+  147 0000013C         
+  148 0000013C         ;getBlue Subroutine
+  149 0000013C         ;
+  150 0000013C         ;Gets and returns the Blue Component value of a pixel at
+                        pixelAddress
+  151 0000013C         ;
+  152 0000013C         ;Parameters:
+  153 0000013C         ;R4= pixelAddress
+  154 0000013C         ;
+  155 0000013C         ;Returns;
+  156 0000013C         ;R9= blueComponent
+  157 0000013C         getBlue
+  158 0000013C E92D407F        STMFD            SP!, {R0-R6, LR}
+  159 00000140 E3A010FF        LDR              R1, =0x0000FF ;R1 = blueMask
+  160 00000144 E5943000        LDR              R3, [R4]    ;pixel = loadPixelV
+                                                            alue(pixelAddress)
+  161 00000148 E0039000        AND              R9, R3, R0  ;blueComp = getBlue
+                                                            Component(pixel)
+  162 0000014C E8BD807F        LDMFD            SP!, {R0-R6, PC}
+  163 00000150         
+  164 00000150         ;getBlueRight Subroutine
+  165 00000150         ;
+  166 00000150         ;Gets and returns the BlueComponent value of a pixel at 
+                       pixelAddress+1
+  167 00000150         ;
+  168 00000150         ;Parameters:
+  169 00000150         ;R4= pixelAddress
+  170 00000150         ;
+  171 00000150         ;Returns;
+  172 00000150         ;R8= blueRightComponent
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  173 00000150         getBlueRight
+  174 00000150 E92D407F        STMFD            SP!, {R0-R6, LR}
+  175 00000154 E3A010FF        LDR              R1, =0x0000FF ;R1 = blueMask
+  176 00000158 E5943004        LDR              R3, [R4, #4] ;pixel = loadPixel
+                                                            Value(pixelAddress+
+                                                            4)
+  177 0000015C E003A001        AND              R10, R3, R1 ;blueComp = getBlue
+                                                            Component(pixel)
+  178 00000160 E8BD807F        LDMFD            SP!, {R0-R6, PC}
+  179 00000164         
+  180 00000164         ;getRedBelow Subroutine
+  181 00000164         ;
+  182 00000164         ;Gets and returns the Red Component value of a pixel at 
+                       pixelAddress (i, j+1)
+  183 00000164         ;
+  184 00000164         ;Parameters:
+  185 00000164         ;R4= pixelAddress
+  186 00000164         ;
+  187 00000164         ;Returns;
+  188 00000164         ;R9= redBelowComponent
+  189 00000164         getRedBelow
+  190 00000164 E92D407F        STMFD            SP!, {R0-R6, LR}
+  191 00000168 E3A018FF        LDR              R1, =0x00FF0000 ;R1 = redMask
+  192 0000016C E1A06106        LSL              R6, R6, #2  ;adjustment = colum
+                                                            ns*4
+  193 00000170 E0844006        ADD              R4, R4, R6
+  194 00000174 E5943000        LDR              R3, [R4]    ;pixel = loadPixelV
+                                                            alue(pixelAddress+a
+                                                            djustment)
+  195 00000178 E0032001        AND              R2, R3, R1  ;redComp = getRedCo
+                                                            mponent(pixel)
+  196 0000017C E1A0A822        LSR              R10, R2, #16 ;shiftRight(redCom
+                                                            p, 24)
+  197 00000180 E8BD807F        LDMFD            SP!, {R0-R6, PC}
+  198 00000184         
+  199 00000184         ;getGreenBelow Subroutine
+  200 00000184         ;
+  201 00000184         ;Gets and returns the Green Component value of a pixel a
+                       t pixelAddress (i, j+1)
+  202 00000184         ;
+  203 00000184         ;Parameters:
+  204 00000184         ;R4= pixelAddress
+  205 00000184         ;
+  206 00000184         ;Returns;
+  207 00000184         ;R9= greenBelowComponent
+  208 00000184         getGreenBelow
+  209 00000184 E92D407F        STMFD            SP!, {R0-R6, LR}
+  210 00000188 E3A01CFF        LDR              R1, =0x0000FF00 ;R1 = greenMask
+                                                            
+  211 0000018C E1A06106        LSL              R6, R6, #2  ;adjustment = colum
+                                                            ns*4
+  212 00000190 E7943006        LDR              R3, [R4, R6] ;pixel = loadPixel
+                                                            Value(pixelAddress+
+                                                            adjustment)
+  213 00000194 E0032001        AND              R2, R3, R1  ;greenComp = getGre
+                                                            enComponent(pixel)
+  214 00000198 E1A0A422        LSR              R10, R2, #8 ;shiftRight(redComp
+                                                            , 24)
+  215 0000019C E8BD807F        LDMFD            SP!, {R0-R6, PC}
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  216 000001A0         
+  217 000001A0         ;getBlueBelow Subroutine
+  218 000001A0         ;
+  219 000001A0         ;Gets and returns the Blue Component value of a pixel at
+                        pixelAddress (i, j+1)
+  220 000001A0         ;
+  221 000001A0         ;Parameters:
+  222 000001A0         ;R4= pixelAddress
+  223 000001A0         ;
+  224 000001A0         ;Returns;
+  225 000001A0         ;R9= blueBelowComponent
+  226 000001A0         getBlueBelow
+  227 000001A0 E92D407F        STMFD            SP!, {R0-R6, LR}
+  228 000001A4 E3A01000        LDR              R1, =0x00000000 ;R1 = blueMask
+  229 000001A8 E1A06106        LSL              R6, R6, #2  ;adjustment = colum
+                                                            ns*4
+  230 000001AC E7943006        LDR              R3, [R4, R6] ;pixel = loadPixel
+                                                            Value(pixelAddress+
+                                                            adjustment)
+  231 000001B0 E003A001        AND              R10, R3, R1 ;blueComp = getRedC
+                                                            omponent(pixel)
+  232 000001B4 E8BD807F        LDMFD            SP!, {R0-R6, PC}
+  233 000001B8         
+  234 000001B8         ;setEdgeWhite Subroutine
+  235 000001B8         ;
+  236 000001B8         ;Sets the pixel value at pixelAddress to white
+  237 000001B8         ;
+  238 000001B8         ;Parameters:
+  239 000001B8         ;R4= pixelAddress
+  240 000001B8         ;
+  241 000001B8         ;Returns;
+  242 000001B8         ;R9= blueBelowComponent
+  243 000001B8         setEdgeWhite
+  244 000001B8 E92D407F        STMFD            SP!, {R0-R6, LR}
+  245 000001BC E3E014FF        LDR              R1, =0x00FFFFFF 
+                                                            ;R1 = whiteValue
+  246 000001C0 E5841000        STR              R1, [R4]    ;setWhite()
+  247 000001C4 E8BD807F        LDMFD            SP!, {R0-R6, PC}
+  248 000001C8         
+  249 000001C8         ;setEdgeBlack Subroutine
+  250 000001C8         ;
+  251 000001C8         ;Sets the pixel value at pixelAddress to black
+  252 000001C8         ;
+  253 000001C8         ;Parameters:
+  254 000001C8         ;R4= pixelAddress
+  255 000001C8         ;
+  256 000001C8         ;Returns;
+  257 000001C8         ;R9= blueBelowComponent
+  258 000001C8         setEdgeBlack
+  259 000001C8 E92D407F        STMFD            SP!, {R0-R6, LR}
+  260 000001CC E3A01000        LDR              R1, =0x00000000 
+                                                            ;R1 = blackValue
+  261 000001D0 E5841000        STR              R1, [R4]    ;setBlack()
+  262 000001D4 E8BD807F        LDMFD            SP!, {R0-R6, PC}
+  263 000001D8         
+  264 000001D8                 END
+Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\b
+onuseffect.d -o.\bonuseffect.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS
+\Include -IC:\Keil_v5\ARM\Inc\Philips --predefine="__EVAL SETA 1" --predefine="
+
+
+
+ARM Macro Assembler    Page 7 
+
+
+__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 516" --predefine="NO_CLO
+CK_SETUP SETA 1" --predefine="NO_EMC_SETUP SETA 1" --predefine="RAM_INTVEC SETA
+ 1" --predefine="RAM_MODE SETA 1" --predefine="REMAP SETA 1" --list=.\bonuseffe
+ct.lst BonusEffect.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+BonusEffect 00000000
+
+Symbol: BonusEffect
+   Definitions
+      At line 1 in file BonusEffect.s
+   Uses
+      None
+Comment: BonusEffect unused
+edgeFoundSet 000000B4
+
+Symbol: edgeFoundSet
+   Definitions
+      At line 63 in file BonusEffect.s
+   Uses
+      At line 43 in file BonusEffect.s
+Comment: edgeFoundSet used once
+edgeNotFoundSet 000000C4
+
+Symbol: edgeNotFoundSet
+   Definitions
+      At line 69 in file BonusEffect.s
+   Uses
+      At line 50 in file BonusEffect.s
+      At line 55 in file BonusEffect.s
+      At line 60 in file BonusEffect.s
+
+endIfOne 00000078
+
+Symbol: endIfOne
+   Definitions
+      At line 44 in file BonusEffect.s
+   Uses
+      At line 31 in file BonusEffect.s
+      At line 36 in file BonusEffect.s
+      At line 41 in file BonusEffect.s
+
+endLoop 000000D4
+
+Symbol: endLoop
+   Definitions
+      At line 74 in file BonusEffect.s
+   Uses
+      At line 23 in file BonusEffect.s
+Comment: endLoop used once
+forOne 00000020
+
+Symbol: forOne
+   Definitions
+      At line 21 in file BonusEffect.s
+   Uses
+      At line 26 in file BonusEffect.s
+Comment: forOne used once
+forTwo 00000030
+
+Symbol: forTwo
+   Definitions
+      At line 25 in file BonusEffect.s
+   Uses
+      At line 67 in file BonusEffect.s
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 73 in file BonusEffect.s
+
+getBlue 0000013C
+
+Symbol: getBlue
+   Definitions
+      At line 157 in file BonusEffect.s
+   Uses
+      At line 37 in file BonusEffect.s
+      At line 56 in file BonusEffect.s
+
+getBlueBelow 000001A0
+
+Symbol: getBlueBelow
+   Definitions
+      At line 226 in file BonusEffect.s
+   Uses
+      At line 57 in file BonusEffect.s
+Comment: getBlueBelow used once
+getBlueRight 00000150
+
+Symbol: getBlueRight
+   Definitions
+      At line 173 in file BonusEffect.s
+   Uses
+      At line 38 in file BonusEffect.s
+Comment: getBlueRight used once
+getGreen 0000010C
+
+Symbol: getGreen
+   Definitions
+      At line 123 in file BonusEffect.s
+   Uses
+      At line 32 in file BonusEffect.s
+      At line 51 in file BonusEffect.s
+
+getGreenBelow 00000184
+
+Symbol: getGreenBelow
+   Definitions
+      At line 208 in file BonusEffect.s
+   Uses
+      At line 52 in file BonusEffect.s
+Comment: getGreenBelow used once
+getGreenRight 00000124
+
+Symbol: getGreenRight
+   Definitions
+      At line 140 in file BonusEffect.s
+   Uses
+      At line 33 in file BonusEffect.s
+Comment: getGreenRight used once
+getRed 000000DC
+
+Symbol: getRed
+   Definitions
+      At line 89 in file BonusEffect.s
+   Uses
+      At line 27 in file BonusEffect.s
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 46 in file BonusEffect.s
+
+getRedBelow 00000164
+
+Symbol: getRedBelow
+   Definitions
+      At line 189 in file BonusEffect.s
+   Uses
+      At line 47 in file BonusEffect.s
+Comment: getRedBelow used once
+getRedRight 000000F4
+
+Symbol: getRedRight
+   Definitions
+      At line 106 in file BonusEffect.s
+   Uses
+      At line 28 in file BonusEffect.s
+Comment: getRedRight used once
+setEdgeBlack 000001C8
+
+Symbol: setEdgeBlack
+   Definitions
+      At line 258 in file BonusEffect.s
+   Uses
+      At line 70 in file BonusEffect.s
+Comment: setEdgeBlack used once
+setEdgeWhite 000001B8
+
+Symbol: setEdgeWhite
+   Definitions
+      At line 243 in file BonusEffect.s
+   Uses
+      At line 64 in file BonusEffect.s
+Comment: setEdgeWhite used once
+start 00000000
+
+Symbol: start
+   Definitions
+      At line 9 in file BonusEffect.s
+   Uses
+      At line 7 in file BonusEffect.s
+Comment: start used once
+stop 000000D8
+
+Symbol: stop
+   Definitions
+      At line 78 in file BonusEffect.s
+   Uses
+      At line 78 in file BonusEffect.s
+Comment: stop used once
+20 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+getPicAddr 00000000
+
+Symbol: getPicAddr
+   Definitions
+      At line 3 in file BonusEffect.s
+   Uses
+      At line 11 in file BonusEffect.s
+Comment: getPicAddr used once
+getPicHeight 00000000
+
+Symbol: getPicHeight
+   Definitions
+      At line 6 in file BonusEffect.s
+   Uses
+      At line 13 in file BonusEffect.s
+Comment: getPicHeight used once
+getPicWidth 00000000
+
+Symbol: getPicWidth
+   Definitions
+      At line 5 in file BonusEffect.s
+   Uses
+      At line 15 in file BonusEffect.s
+Comment: getPicWidth used once
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 2 in file BonusEffect.s
+   Uses
+      None
+Comment: main unused
+putPic 00000000
+
+Symbol: putPic
+   Definitions
+      At line 4 in file BonusEffect.s
+   Uses
+      At line 76 in file BonusEffect.s
+Comment: putPic used once
+5 symbols
+363 symbols in table

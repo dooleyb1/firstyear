@@ -1,0 +1,82 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             AsciiAdd, CODE, READONLY
+    2 00000000                 IMPORT           main
+    3 00000000                 EXPORT           start
+    4 00000000         
+    5 00000000         start
+    6 00000000 E3A01032        LDR              R1, ='2'    ; R1 = 0x32 (ASCII 
+                                                            symbol '2')
+    7 00000004 E3A02034        LDR              R2, ='4'    ; R2 = 0x34 (ASCII 
+                                                            symbol '4') 
+    8 00000008         
+    9 00000008 E3A03030        LDR              R3, ='0'    ; 0x30
+   10 0000000C E0414003        SUB              R4, R1, R3  ;turn the character
+                                                             2 into number 2
+   11 00000010 E0425003        SUB              R5, R2, R3  ;turn the character
+                                                             4 into number 4
+   12 00000014 E0840005        ADD              R0, R4, R5  ;add the numbers
+   13 00000018 E0800003        ADD              R0, R0, R3  ;turn the result ba
+                                                            ck into character
+   14 0000001C         
+   15 0000001C EAFFFFFE 
+                       stop    B                stop
+   16 00000020         
+   17 00000020                 END
+Command Line: --debug --xref --apcs=interwork --depend=.\asciiadd.d -o.\asciiad
+d.o -IC:\Keil\ARM\RV31\INC -IC:\Keil\ARM\CMSIS\Include -IC:\Keil\ARM\Inc\Philip
+s --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --predefine="NO_C
+LOCK_SETUP SETA 1" --predefine="NO_EMC_SETUP SETA 1" --predefine="RAM_INTVEC SE
+TA 1" --predefine="RAM_MODE SETA 1" --predefine="REMAP SETA 1" --list=.\asciiad
+d.lst AsciiAdd.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+AsciiAdd 00000000
+
+Symbol: AsciiAdd
+   Definitions
+      At line 1 in file AsciiAdd.s
+   Uses
+      None
+Comment: AsciiAdd unused
+start 00000000
+
+Symbol: start
+   Definitions
+      At line 5 in file AsciiAdd.s
+   Uses
+      At line 3 in file AsciiAdd.s
+Comment: start used once
+stop 0000001C
+
+Symbol: stop
+   Definitions
+      At line 15 in file AsciiAdd.s
+   Uses
+      At line 15 in file AsciiAdd.s
+Comment: stop used once
+3 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 2 in file AsciiAdd.s
+   Uses
+      None
+Comment: main unused
+1 symbol
+341 symbols in table

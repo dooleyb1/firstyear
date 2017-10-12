@@ -1,0 +1,37 @@
+aCount = 8;
+aElems = [aElems];
+count = 0;
+
+while1
+{
+testChar = getNext.aElems();					//get next comparisonValue
+aCount = [aCount];						//reset aCount = 8
+aElemValue = [aElems];						//load first aValue
+
+while2 (aCount!=0)
+{
+	result = testChar + aElemValue;				//checking for closure
+	
+	if (result != 0 && aCount = 0)				//notClosed
+	{
+		closed = 0;
+		B endRead
+	}	
+
+	else if (result != 0 && aCount !=0) 			//notYetClosed
+	{	
+		aElemValue = getNext.aElems();
+		aCount --;
+		branch to while2;
+	}
+	
+	else 							//closed
+	{
+		aCount--;
+		load next testChar; (while1)
+	}
+}
+}
+
+closed =1
+	

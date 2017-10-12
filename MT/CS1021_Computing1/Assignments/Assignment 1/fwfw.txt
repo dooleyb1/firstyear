@@ -1,0 +1,446 @@
+printWordMean
+	LDR R0, ='M' 		; M	
+	BL sendchar 
+	LDR R0, ='e'		; e	
+	BL sendchar			
+	LDR R0, ='a' 		; a
+	BL sendchar
+	LDR R0, ='n'		; n
+	BL sendchar 
+	LDR R0, ='='		; =
+	BL sendchar 
+	
+	LDR R12, =0			; clear R12
+	CMP R11, #0			; if ( mean == 0 )
+	BNE meanPrintStart
+	LDR R0, =0x30		;
+	BL sendchar			; print 0
+	B printWordCount
+	
+						; // This next section uses an algorithm which detects the
+						; // suitable power of 10 containing the first digit
+						; // and continues to print the value of all digits 
+						; // within the register in decimal form.
+						
+meanPrintStart		; else{
+	LDR R10, =1			; powerOf10 = 1
+	LDR R4, =10			; 10xPowerOf10 = 10
+
+meanDigitCalc
+	CMP R11, #0			; if (mean = 0)
+	BEQ printWordCount	; displayCount
+	CMP R11, R10		; if (mean >= powerOf10 
+	BLT meanElse		; &&
+	CMP R11, R4			; mean < 10xPowerOf10)
+	BGE	meanElse		; {
+
+	ADD R12, R12, #1	; outputDigit++
+	CMP R11, R10		; if (mean == powerOf10)
+	BNE meanContinue		; &&
+	CMP R11, #1			;     mean != 1)
+	BEQ meanOutputPrint
+	BNE zeroFrontPrint
+	
+meanContinue
+	SUB R11, R11, R10	; else ( mean - powerOf10 )
+	CMP R11, R10		; if (mean < powerOf10)
+	BGE meanDigitCalc	;
+	MOV R0, R12			; print outputDigit
+	ADD R0, R0, #0x30
+	BL sendchar			;
+	LDR R12, =0			; clear R12
+	B meanPrintStart	;
+	
+meanOutputPrint
+	MOV R0, R12			; print outputDigit
+	ADD R0, R0, #0x30
+	BL sendchar			;
+	B printWordCount	;
+
+meanElse				; else
+	MUL R10, R6, R10	; powerOf10New = 10 * powerOf10Old
+	MUL R4, R6, R4		; 10xPowerOf10New = 10 * 10xPowerOf10Old
+	B meanDigitCalc
+
+zeroFrontPrint	
+	MOV R0, R12			; load outputDigit into R0
+	ADD R0, R0, #0x30
+	BL sendchar
+
+						; // This next section allows digits ending in 0's to be
+						; // displayed for example if the mean was 400
+
+zeroDigit
+	LDR R10, =1
+	LDR R4, =10
+	
+meanZeroPrint	
+	CMP R11, R4			; if ( mean = 10xPowerOf10 )
+	BNE meanZeroElse
+	LDR R0, =0x30		; load 0 into R0
+	BL sendchar			; print 0
+	MOV R11, R10		; set newMean = powerOf 10 (divide by 10)
+	CMP R11, #1			; if (newMean == 1)
+	BEQ printWordCount	; endRead
+	B zeroDigit		
+	
+meanZeroElse
+	MUL R10, R6, R10	; powerOf10New = 10 * powerOf10Old
+	MUL R4, R6, R4		; 10xPowerOf10New = 10 * 10xPowerOf10Old
+	B meanZeroPrint
+
+						; // The algorithm used above is here repeated for 
+						; // the statistical measure of count	
+
+printWordCount
+	LDR R0, =0x20		; SPACE
+	BL sendchar
+	LDR R0, =0xA		; NewLine
+	BL sendchar
+	LDR R0, ='C' 		; C	
+	BL sendchar 
+	LDR R0, ='o'		; o	
+	BL sendchar			
+	LDR R0, ='u' 		; u
+	BL sendchar
+	LDR R0, ='n'		; n
+	BL sendchar 
+	LDR R0, ='t'		; t
+	BL sendchar 
+	LDR R0, ='='		; =
+	BL sendchar 
+	
+	LDR R12, =0			; clear R12
+	CMP R5, #0			; if ( count == 0 )
+	BNE meanPrintStart2
+	LDR R0, =0x30		;
+	BL sendchar			; print 0
+	B printWordSum
+	
+	
+meanPrintStart2
+	LDR R10, =1			; powerOf10 = 1
+	LDR R4, =10			; 10xPowerOf10 = 10
+
+digitCalc2
+	CMP R5, #0			; if (count = 0)
+	BEQ printWordSum	; endRead
+	CMP R5, R10		    ; if (count >= powerOf10 
+	BLT meanElse2		; &&
+	CMP R5, R4			; 	  count < 10xPowerOf10)
+	BGE	meanElse2			; {
+
+	ADD R12, R12, #1	; outputDigit++
+	CMP R5, R10			; if (count == powerOf10)
+	BNE continue2		; &&
+	CMP R5, #1			;     count != 1)
+	BEQ printOutputNum2
+	BNE zeroFrontPrint2
+	
+continue2
+	SUB R5, R5, R10		; else ( count - powerOf10 )
+	CMP R5, R10			; if (count < powerOf10)
+	BGE digitCalc2		;
+	MOV R0, R12			; print outputDigit
+	ADD R0, R0, #0x30
+	BL sendchar			;
+	LDR R12, =0			; clear R12
+	B meanPrintStart2	;
+	
+printOutputNum2	
+	MOV R0, R12			; print outputDigit
+	ADD R0, R0, #0x30
+	BL sendchar			;
+	B printWordSum		;
+
+meanElse2				; else
+	MUL R10, R6, R10	; powerOf10New = 10 * powerOf10Old
+	MUL R4, R6, R4		; 10xPowerOf10New = 10 * 10xPowerOf10Old
+	B digitCalc2
+
+zeroFrontPrint2	
+	MOV R0, R12			; load outputDigit into R0
+	ADD R0, R0, #0x30
+	BL sendchar
+
+zeroDigit2
+	LDR R10, =1
+	LDR R4, =10
+	
+zeroPrintStart2	
+	CMP R5, R4			; if ( count = 10xPowerOf10 )
+	BNE zeroElse2
+	LDR R0, =0x30		; load 0 into R0
+	BL sendchar			; print 0
+	MOV R5, R10			; set newCount = powerOf 10 (divide by 10)
+	CMP R5, #1			; if (newCount == 1)
+	BEQ printWordSum	; endRead
+	B zeroDigit2	
+	
+zeroElse2
+	MUL R10, R6, R10	; powerOf10New = 10 * powerOf10Old
+	MUL R4, R6, R4		; 10xPowerOf10New = 10 * 10xPowerOf10Old
+	B zeroPrintStart2
+	
+	
+						; // The algorithm used above is here repeated for 
+						; // the statistical measure of sum	
+						
+printWordSum
+	LDR R0, =0xA		; NewLine
+	BL sendchar
+	LDR R0, ='S' 		; S	
+	BL sendchar 
+	LDR R0, ='u'		; u	
+	BL sendchar			
+	LDR R0, ='m' 		; m
+	BL sendchar 
+	LDR R0, ='='		; =
+	BL sendchar 
+	
+	LDR R12, =0			; clear R12
+	CMP R7, #0			; if ( sum == 0 )
+	BNE meanPrintStart3
+	LDR R0, =0x30		;
+	BL sendchar			; print 0
+	B printWordMin
+	
+	
+meanPrintStart3
+	LDR R10, =1			; powerOf10 = 1
+	LDR R4, =10			; 10xPowerOf10 = 10
+
+digitCalc3
+	CMP R7, #0			; if (sum = 0)
+	BEQ printWordMin	; endRead
+	CMP R7, R10			; if (sum>= powerOf10 
+	BLT meanElse3		; &&
+	CMP R7, R4			; 	  sum < 10xPowerOf10)
+	BGE	meanElse3		; {
+
+	ADD R12, R12, #1	; outputDigit++
+	CMP R7, R10			; if (sum == powerOf10)
+	BNE continue3		; &&
+	CMP R7, #1			;     sum != 1)
+	BEQ printOutputNum3
+	BNE zeroFrontPrint3
+	
+continue3
+	SUB R7, R7, R10		; else ( sum - powerOf10 )
+	CMP R7, R10			; if ( sum < powerOf10)
+	BGE digitCalc3		;
+	MOV R0, R12			; print outputDigit
+	ADD R0, R0, #0x30
+	BL sendchar			;
+	LDR R12, =0			; clear R12
+	B meanPrintStart3	;
+	
+printOutputNum3	
+	MOV R0, R12			; print outputDigit
+	ADD R0, R0, #0x30
+	BL sendchar			;
+	B printWordMin	;
+
+meanElse3				; else
+	MUL R10, R6, R10	; powerOf10New = 10 * powerOf10Old
+	MUL R4, R6, R4		; 10xPowerOf10New = 10 * 10xPowerOf10Old
+	B digitCalc3
+
+zeroFrontPrint3	
+	MOV R0, R12			; load outputDigit into R0
+	ADD R0, R0, #0x30
+	BL sendchar
+
+zeroDigit3
+	LDR R10, =1
+	LDR R4, =10
+	
+zeroPrintStart3	
+	CMP R7, R4			; if ( sum = 10xPowerOf10 )
+	BNE zeroElse3
+	LDR R0, =0x30		; load 0 into R0
+	BL sendchar			; print 0
+	MOV R7, R10			; set newSum = powerOf 10 (divide by 10)
+	CMP R7, #1			; if (newSum == 1)
+	BEQ printWordMin	; endRead
+	B zeroDigit3		
+	
+zeroElse3
+	MUL R10, R6, R10	; powerOf10New = 10 * powerOf10Old
+	MUL R4, R6, R4		; 10xPowerOf10New = 10 * 10xPowerOf10Old
+	B zeroPrintStart3
+
+						; // The algorithm used above is here repeated for 
+						; // the statistical measure of min	
+
+printWordMin
+	LDR R0, =0xA		; NewLine
+	BL sendchar
+	LDR R0, ='M' 		; M
+	BL sendchar 
+	LDR R0, ='i'		; i	
+	BL sendchar			
+	LDR R0, ='n' 		; n
+	BL sendchar 
+	LDR R0, ='='		; =
+	BL sendchar 
+	
+	LDR R12, =0			; clear R12
+	CMP R8, #0			; if ( min == 0 )
+	BNE meanPrintStart4
+	LDR R0, =0x30		;
+	BL sendchar			; print 0
+	B printWordMax
+	
+	
+meanPrintStart4
+	LDR R10, =1			; powerOf10 = 1
+	LDR R4, =10			; 10xPowerOf10 = 10
+
+digitCalc4
+	CMP R8, #0			; if (min = 0)
+	BEQ printWordMax		; endRead
+	CMP R8, R10			; if (min >= powerOf10 
+	BLT meanElse4		; &&
+	CMP R8, R4			; 	  min < 10xPowerOf10)
+	BGE	meanElse4			; {
+
+	ADD R12, R12, #1	; outputDigit++
+	CMP R8, R10			; if (min == powerOf10)
+	BNE continue4		; &&
+	CMP R8, #1			;     min != 1)
+	BEQ printOutputNum4
+	BNE zeroFrontPrint4
+	
+continue4
+	SUB R8, R8, R10		; else ( min - powerOf10 )
+	CMP R8, R10			; if (min < powerOf10)
+	BGE digitCalc4		;
+	MOV R0, R12			; print outputDigit
+	ADD R0, R0, #0x30
+	BL sendchar			;
+	LDR R12, =0			; clear R12
+	B meanPrintStart4	;
+	
+printOutputNum4	
+	MOV R0, R12			; print outputDigit
+	ADD R0, R0, #0x30
+	BL sendchar			;
+	B printWordMax		;
+
+meanElse4				; else
+	MUL R10, R6, R10	; powerOf10New = 10 * powerOf10Old
+	MUL R4, R6, R4		; 10xPowerOf10New = 10 * 10xPowerOf10Old
+	B digitCalc4
+
+zeroFrontPrint4
+	MOV R0, R12			; load outputDigit into R0
+	ADD R0, R0, #0x30
+	BL sendchar
+
+zeroDigit4
+	LDR R10, =1
+	LDR R4, =10
+	
+zeroPrintStart4	
+	CMP R8, R4			; if ( min = 10xPowerOf10 )
+	BNE zeroElse4
+	LDR R0, =0x30		; load 0 into R0
+	BL sendchar			; print 0
+	MOV R8, R10			; set newMin = powerOf 10 (divide by 10)
+	CMP R8, #1			; if (newMin == 1)
+	BEQ printWordMax	; endRead
+	B zeroDigit4	
+	
+zeroElse4
+	MUL R10, R6, R10	; powerOf10New = 10 * powerOf10Old
+	MUL R4, R6, R4		; 10xPowerOf10New = 10 * 10xPowerOf10Old
+	B zeroPrintStart4
+	
+						; // The algorithm used above is here repeated for 
+						; // the statistical measure of max	
+	
+printWordMax
+	LDR R0, =0xA		; NewLine
+	BL sendchar
+	LDR R0, ='M' 		; M
+	BL sendchar 
+	LDR R0, ='a'		; a	
+	BL sendchar			
+	LDR R0, ='x' 		; x
+	BL sendchar 
+	LDR R0, ='='		; =
+	BL sendchar 
+	
+	LDR R12, =0			; clear R12
+	CMP R9, #0			; if ( max == 0 )
+	BNE meanPrintStart5
+	LDR R0, =0x30		;
+	BL sendchar			; print 0
+	B endRead
+	
+	
+meanPrintStart5
+	LDR R10, =1			; powerOf10 = 1
+	LDR R4, =10			; 10xPowerOf10 = 10
+
+digitCalc5
+	CMP R9, #0			; if (max = 0)
+	BEQ endRead			; endRead
+	CMP R9, R10			; if (max >= powerOf10 
+	BLT meanElse5		; &&
+	CMP R9, R4			; 	  max < 10xPowerOf10)
+	BGE	meanElse5			; {
+
+	ADD R12, R12, #1	; outputDigit++
+	CMP R9, R10			; if (max == powerOf10)
+	BNE continue5		; &&
+	CMP R9, #1			;     max != 1)
+	BEQ printOutputNum5
+	BNE zeroFrontPrint5
+	
+continue5
+	SUB R9, R9, R10		; else ( max - powerOf10 )
+	CMP R9, R10			; if (max < powerOf10)
+	BGE digitCalc5		;
+	MOV R0, R12			; print outputDigit
+	ADD R0, R0, #0x30
+	BL sendchar			;
+	LDR R12, =0			; clear R12
+	B meanPrintStart5	;
+	
+printOutputNum5	
+	MOV R0, R12			; print outputDigit
+	ADD R0, R0, #0x30
+	BL sendchar			;
+	B endRead	;
+
+meanElse5				; else
+	MUL R10, R6, R10	; powerOf10New = 10 * powerOf10Old
+	MUL R4, R6, R4		; 10xPowerOf10New = 10 * 10xPowerOf10Old
+	B digitCalc5
+
+zeroFrontPrint5
+	MOV R0, R12			; load outputDigit into R0
+	ADD R0, R0, #0x30
+	BL sendchar
+
+zeroDigit5
+	LDR R10, =1
+	LDR R4, =10
+	
+zeroPrintStart5
+	CMP R9, R4			; if ( max = 10xPowerOf10 )
+	BNE zeroElse5
+	LDR R0, =0x30		; load 0 into R0
+	BL sendchar			; print 0
+	MOV R9, R10			; set newMax = powerOf 10 (divide by 10)
+	CMP R9, #1			; if (newMax == 1)
+	BEQ endRead			; endRead
+	B zeroDigit5	
+	
+zeroElse5
+	MUL R10, R6, R10	; powerOf10New = 10 * powerOf10Old
+	MUL R4, R6, R4		; 10xPowerOf10New = 10 * 10xPowerOf10Old
+	B zeroPrintStart5
+	

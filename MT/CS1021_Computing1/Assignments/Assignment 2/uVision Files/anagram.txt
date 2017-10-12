@@ -1,0 +1,46 @@
+stringA = [stringA]
+stringB = [stringB]
+
+testChar = get.first(stringA)
+
+while1 (testChar != 0x00)
+{
+	
+	compareChar = get.first(stringB)
+	count = 0;
+	
+	while(compareChar = SPACE)
+	{
+		compareChar = get.next(StringB)
+		if (compareChar = 0x00)
+		{
+			anagram = true
+			endRead
+		}
+	}
+
+	while3 (compareChar !=0x00)
+	{
+		result = testChar - compareChar
+		if (result = 0)
+		{
+			setCompareChar = SPACE 
+			testChar = get.next(stringA)
+			B while 1
+		}
+		else
+		{
+			compareChar = get.next(StringB)
+			B while 2
+		}
+	}
+	anagram = false
+	B endRead
+}
+
+if (testChar = 0x00)
+{
+	anagram = true;
+}
+
+

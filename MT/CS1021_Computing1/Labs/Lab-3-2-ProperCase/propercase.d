@@ -1,0 +1,1 @@
+.\propercase.o: ProperCase.s

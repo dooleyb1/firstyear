@@ -1,0 +1,1 @@
+.\symmdiff.o: SymmDiff.s

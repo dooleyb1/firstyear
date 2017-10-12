@@ -1,0 +1,34 @@
+aSize = [aSize]
+aElems = [aElems]
+bSize = [bSize]
+bElems = [bElems]
+
+
+countA = 0;
+
+while1(countA < aSize)
+countA++
+testElem = aElems.getNext();
+countB = 0;
+testB = bElems.getFirst();
+
+	while2( countB < bSize )
+	{
+		result = testA - testB;
+		
+		if (result = 0)
+		{
+			intersection = true;
+			B while1;
+		}
+		else
+		{
+			intersection = false;
+			count B ++
+			testB = bElems.getNext();
+			B while 2
+		}
+	}
+	store testElem in setC
+	cSize ++
+}
